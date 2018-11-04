@@ -24,7 +24,11 @@ def snoc {α : Type} : list α → α → list α
    element in a list. -/
 
 def map {α : Type} {β : Type} (f : α → β) : list α → list β
-:= sorry
+| [] := []
+| (a::b) := (f a) :: (map b)
+
+#reduce map(+10)[2,4,5]
+#reduce map(/2)[10,20,30]
 
 /- 2.2. State the so-called functiorial properties of `map` as lemmas.
    Schematically:
