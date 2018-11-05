@@ -40,4 +40,8 @@ def map {α : Type} {β : Type} (f : α → β) : list α → list β
    arbitrary types.
 -/
 
--- enter your lemma statements here
+lemma m1 {α: Type} (xs: list α): map(λx, x) xs = xs
+:=sorry
+
+lemma m2 {α: Type} {β: Type} {γ: Type} (xs: list α) (f: α → β) (g: β → γ): map(λx, g(f x)) xs = map g (map f xs)
+:=sorry
