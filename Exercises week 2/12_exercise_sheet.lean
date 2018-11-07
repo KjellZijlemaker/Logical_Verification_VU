@@ -8,12 +8,51 @@ def add : ℕ → ℕ → ℕ
 | 0            n := n
 | (nat.succ m) n := nat.succ (add m n)
 
+
+-- def add : nat → nat → nat
+-- | m nat.zero     := m
+-- | m (nat.succ n) := nat.succ (add m n)
+
+
+
+-- lemma natzero (m : nat) : add m 0 = m:=
+-- begin
+-- induction m,
+-- simp[add],
+-- refl
+-- end
+
+
+-- lemma test (m : nat) :  add 0 m = m:=
+-- begin
+-- induction m,
+-- refl,
+-- simp[add]
+
+-- end
+
+
+-- lemma add_commm (m n : nat) : add m n = add n m :=
+-- begin
+-- induction m,
+-- simp[natzero, add],
+
+
+
+-- end
+
 /- We proved these properties already in the lecture, so we take them as axioms here. (We will often
 use `sorry` like this to avoid clutter in exercise sheets. But keep in mind that `sorry` is a risky
 construct.) -/
 
-lemma add_zero : ∀m : ℕ, add m 0 = m := sorry
-lemma add_succ : ∀m n : ℕ, add m (nat.succ n) = nat.succ (add m n) := sorry
+lemma add_zero : ∀m : ℕ, add m 0 = m
+| (nat.succ m) := by simp [add, add_zero m]
+| 0            := by refl
+
+
+lemma add_succ : ∀m n : ℕ, add m (nat.succ n) = nat.succ (add m n)
+| m 0 := by refl
+
 lemma add_comm : ∀m n : ℕ, add m n = add n m := sorry
 lemma add_assoc : ∀l m n : ℕ, add (add l m) n = add l (add m n) := sorry
 

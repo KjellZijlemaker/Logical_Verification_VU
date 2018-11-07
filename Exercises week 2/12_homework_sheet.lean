@@ -7,13 +7,18 @@ def drop {α : Type} : ℕ → list α → list α
 | (_ + 1) []        := []
 | (m + 1) (x :: xs) := drop m xs
 
+#reduce drop 2 [2,4,6, 8]
+
 /- 1.1. Define `take`. -/
 
 /- To avoid bad surprises in the proofs, we recommend that you follow the same recursion pattern as
 for `drop` above. -/
 
 def take {α : Type} : ℕ → list α → list α
-:= sorry
+| 0             xs      :=      []
+| (_ + 1)       []      :=      []
+| (m + 1)  (x::xs) :=      [x] ++ take m xs 
+
 
 #reduce take 0 [3, 7, 11]   -- expected: []
 #reduce take 1 [3, 7, 11]   -- expected: [3]
@@ -21,17 +26,30 @@ def take {α : Type} : ℕ → list α → list α
 #reduce take 3 [3, 7, 11]   -- expected: [3, 7, 11]
 #reduce take 4 [3, 7, 11]   -- expected: [3, 7, 11]
 
+#reduce take 3[]
 -- when `#reduce` fails for some obscure reason, try `#eval`:
 #eval take 2 ["a", "b", "c"]   -- expected: ["a", "b"]
 
 /- 1.2. Prove the following lemmas. Notice that they are registered as simp rules thanks to the
 `@[simp]` attribute. -/
+@[simp] lemma drop_nil {α : Type} : ∀(n : ℕ), drop n ([] : list α) = [] :=
+begin
+intros n,
+induction n,
+simp,
+refl,
+simp[drop]
+end
 
-@[simp] lemma drop_nil {α : Type} : ∀(n : ℕ), drop n ([] : list α) = []
-:= sorry
 
-@[simp] lemma take_nil {α : Type} : ∀(n : ℕ), take n ([] : list α) = []
-:= sorry
+@[simp] lemma take_nil {α : Type} : ∀(n : ℕ), take n ([] : list α) = []:=
+begin
+intros n,
+induction n,
+simp,
+refl,
+simp[take]
+end
 
 /- 1.3. Follow the recursion pattern of `drop` and `take` to prove the following lemmas. In other
 words, for each lemma, there should be three cases, and the third case will need to invoke the
@@ -44,13 +62,38 @@ third case of `drop_drop`.
 
 lemma drop_drop {α : Type} : ∀(m n : ℕ) (xs : list α), drop n (drop m xs) = drop (n + m) xs
 | 0       n xs        := by refl
--- add the two missing cases here
+| (_ + 1) n []        := by simp
+| (m + 1) n (x :: xs)       :=
+begin
+rw[<-add_assoc n m 1],
+unfold drop,
+simp[drop_drop m],
+end
+
 
 lemma take_take {α : Type} : ∀(m : ℕ) (xs : list α), take m (take m xs) = take m xs
-:= sorry
+| 0 m                    := by refl
+| (_ + 1) m              := 
+begin
+induction m,
+refl,
+simp[take, take_take]
+end
 
 lemma take_drop {α : Type} : ∀(n : ℕ) (xs : list α), take n xs ++ drop n xs = xs
-:= sorry
+| 0 xs := by simp[take, drop]
+| (_ + 1) xs :=
+begin
+induction xs,
+simp[take_drop],
+unfold take,
+unfold drop,
+rw[<-xs_ih],
+simp,
+rw[xs_ih],
+simp[take_drop]
+end
+
 
 
 /- Question 2: Gauss's summation formula -/
@@ -65,10 +108,32 @@ def sum_upto (f : ℕ → ℕ) : ℕ → ℕ
 Hints: The `ac_refl` tactic might be useful to reason about multiplication. The rules about `add`
 and `mul` in `12_exercise.lean` exist with the same names about '+' and '*' in Lean's libraries. -/
 
-lemma sum_upto_eq : ∀m : ℕ, 2 * sum_upto id m = m * (m + 1)
-:= sorry
+lemma sum_upto_eq : ∀m : ℕ, 2 * sum_upto id m = m * (m + 1) :=
+begin 
+intros m,
+simp[mul_add, mul_comm],
+rw[<-mul_comm m],
+induction m,
+simp[sum_upto],
+simp[mul_comm],
+simp[sum_upto],
+simp[mul_comm],
+simp[mul_add],
+simp[mul_comm],
+rw[m_ih],
+
+end
 
 /- 2.2. Prove the following property of `sum_upto`. -/
 
-lemma sum_upto_mul (a : ℕ) (f : ℕ → ℕ) : ∀(n : ℕ), sum_upto (λi, a * f i) n = a * sum_upto f n
-:= sorry
+lemma sum_upto_mul (a : ℕ) (f : ℕ → ℕ) : ∀(n : ℕ), sum_upto (λi, a * f i) n = a * sum_upto f n :=
+begin
+intros a,
+rw[mul_comm],
+induction a,
+simp[sum_upto],
+simp[mul_comm],
+simp[sum_upto],
+rw[a_ih],
+simp[mul_comm, mul_add],
+end
