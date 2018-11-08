@@ -10,14 +10,14 @@ need the elimination rule for `false` at a key point. -/
 lemma herman (p : Prop) : ¬¬ (¬¬ p → p) :=
 begin
 dunfold not,
-assume ph,
+intro ph,
 apply ph,
-assume lh,
+intro lh,
 apply false.elim,
 apply lh,
-assume kh,
+intro kh,
 apply ph,
-assume sh,
+intro sh,
 assumption
 end
 
@@ -36,16 +36,16 @@ def double_negation := ∀p : Prop, ¬¬ p → p
 
 lemma dn_imp_em : double_negation → excluded_middle :=
 begin
-assume ph qh,
+intros ph qh,
 apply ph,
-assume lh,
+intro lh,
 apply false.elim,
 apply ph,
-assume sh,
+intro sh,
 apply false.elim,
 apply lh,
 apply or.inr,
-assume th,
+intro th,
 apply lh,
 apply or.inl,
 exact th
@@ -54,22 +54,36 @@ end
 -- these are copied from the exercise; there is no need to prove them again
 lemma em_imp_peirce : excluded_middle → peirce := 
 begin
-assume ph qh lh sh,
-apply sh,
-assume ah,
+intros a b c d,
+apply d,
+intro e,
 apply or.elim,
-apply ph,
-assume l,
-apply false.elim,
-apply l,
-assume s,
+apply a c,
+intro f,
+exact f,
+intro g,
+apply or.elim,
+apply or.inr,
+apply a c,
+intro a,
+apply a,
+intro ls,
 apply false.elim,
 apply or.elim,
-apply ph,
-assume s,
+apply a c,
+apply g,
+intro l,
 
-
-
+-- intros ph qh lh sh,
+-- apply sh,
+-- intro ah,
+-- apply or.elim,
+-- apply or.inr,
+-- apply ph,
+-- apply qh,
+-- intro ls,
+-- apply ls,
+-- apply sh
 end
 
 lemma peirce_imp_dn : peirce → double_negation := 
@@ -95,14 +109,53 @@ we have already proved. -/
 
 /- 2.1. Prove the distributivity of `∀` over `∧` using `intro(s)`, `apply`, and `exact`. -/
 
-example {α} (p q : α → Prop) : (∀x, p x ∧ q x) ↔ (∀x, p x) ∧ (∀x, q x) :=
-sorry
+
+
+example {α} (p q : α → Prop) :
+ (∀x, p x ∧ q x) ↔  (∀x, p x) ∧ (∀x, q x) :=
+begin
+apply iff.intro,
+intro ph,
+apply and.intro,
+intro sh,
+apply and.elim,
+apply ph,
+exact sh,
+intros lh qh,
+exact lh,
+intro eh,
+apply and.elim,
+apply ph,
+exact eh,
+intros ah bh,
+exact bh,
+intros newph newsh,
+apply and.intro,
+apply and.elim,
+apply newph,
+intros newph newsh,
+apply newph,
+apply and.elim,
+apply newph,
+intros qh yh,
+apply yh
+end 
+
 
 /- 2.2. Redo the above proof, this time using structured proofs (with `assume`, `have`, and `show`)
 for the two subcases emerging from the introduction rule for `↔`. -/
 
 example {α} (p q : α → Prop) : (∀x, p x ∧ q x) ↔ (∀x, p x) ∧ (∀x, q x) :=
-sorry
+begin
+  apply iff.intro,
+  intro h,
+  cases h with hp,
+  show ∀ (x : α), p x ∧ q x,
+  cases hqr with hq qr,
+
+
+    
+end
 
 
 /- Question 3: The reverse of a list, revisited -/
