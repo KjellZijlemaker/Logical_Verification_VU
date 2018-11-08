@@ -108,32 +108,26 @@ def sum_upto (f : ℕ → ℕ) : ℕ → ℕ
 Hints: The `ac_refl` tactic might be useful to reason about multiplication. The rules about `add`
 and `mul` in `12_exercise.lean` exist with the same names about '+' and '*' in Lean's libraries. -/
 
-lemma sum_upto_eq : ∀m : ℕ, 2 * sum_upto id m = m * (m + 1) :=
+lemma sum_upto_eq : ∀m : ℕ, 2 * sum_upto id m = m * (m + 1) 
+| 0 := by refl
+| (m + 1) :=
 begin 
-intros m,
 simp[mul_add, mul_comm],
 rw[<-mul_comm m],
-induction m,
 simp[sum_upto],
-simp[mul_comm],
-simp[sum_upto],
-simp[mul_comm],
 simp[mul_add],
-simp[mul_comm],
-rw[m_ih],
-
+simp[sum_upto_eq],
+simp[mul_add],
+simp[mul_comm]
 end
 
 /- 2.2. Prove the following property of `sum_upto`. -/
 
-lemma sum_upto_mul (a : ℕ) (f : ℕ → ℕ) : ∀(n : ℕ), sum_upto (λi, a * f i) n = a * sum_upto f n :=
+lemma sum_upto_mul (a : ℕ) (f : ℕ → ℕ) : ∀(n : ℕ), sum_upto (λi, a * f i) n = a * sum_upto f n 
+| 0 := by refl
+| (m + 1) :=
 begin
-intros a,
-rw[mul_comm],
-induction a,
 simp[sum_upto],
-simp[mul_comm],
-simp[sum_upto],
-rw[a_ih],
-simp[mul_comm, mul_add],
+simp[sum_upto_mul],
+simp[mul_add]
 end
