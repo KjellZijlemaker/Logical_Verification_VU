@@ -9,16 +9,16 @@ need the elimination rule for `false` at a key point. -/
 
 lemma herman (p : Prop) : ¬¬ (¬¬ p → p) :=
 begin
-dunfold not,
-intro ph,
-apply ph,
-intro lh,
-apply false.elim,
-apply lh,
-intro kh,
-apply ph,
-intro sh,
-assumption
+  dunfold not,
+  intro ph,
+  apply ph,
+  intro lh,
+  apply false.elim,
+  apply lh,
+  intro kh,
+  apply ph,
+  intro sh,
+  assumption
 end
 
 
@@ -36,19 +36,19 @@ def double_negation := ∀p : Prop, ¬¬ p → p
 
 lemma dn_imp_em : double_negation → excluded_middle :=
 begin
-intros ph qh,
-apply ph,
-intro lh,
-apply false.elim,
-apply ph,
-intro sh,
-apply false.elim,
-apply lh,
-apply or.inr,
-intro th,
-apply lh,
-apply or.inl,
-exact th
+  intros ph qh,
+  apply ph,
+  intro lh,
+  apply false.elim,
+  apply ph,
+  intro sh,
+  apply false.elim,
+  apply lh,
+  apply or.inr,
+  intro th,
+  apply lh,
+  apply or.inl,
+  assumption
 end
 
 -- these are copied from the exercise; there is no need to prove them again
@@ -62,41 +62,37 @@ apply a c,
 intro f,
 exact f,
 intro g,
-apply or.elim,
-apply or.inr,
-apply a c,
-intro a,
-apply a,
-intro ls,
 apply false.elim,
-apply or.elim,
-apply a c,
 apply g,
-intro l,
+assumption
 
--- intros ph qh lh sh,
--- apply sh,
--- intro ah,
--- apply or.elim,
--- apply or.inr,
--- apply ph,
--- apply qh,
--- intro ls,
--- apply ls,
--- apply sh
+
+
 end
 
-lemma peirce_imp_dn : peirce → double_negation := 
+lemma peirce_imp_dn : peirce → double_negation :=
 begin
-assume a b c ,
-apply false.elim,
-apply c,
-assume b,
-apply c,
-assume l,
-apply a,
+  intros p not q,
+  apply p,
+  intro s,
+  apply false.elim,
+  apply q,
+  apply s,
+  apply p not,
+  intro l,
+  apply l,
+  apply false.elim,
+  apply q,
+  intro sh,
+  apply p,
+  intro lh,
+  apply s,
+  apply lh,
+  apply s,
+  assumption,
+  assumption,
+  assumption
 end
-
 
 /- 1.3. We have proved three of the six possible implications between `excluded_middle`, `peirce`,
 and `double_negation`. State and prove the three missing implications, exploiting the three theorems
@@ -141,6 +137,14 @@ intros qh yh,
 apply yh
 end 
 
+example (p q : Prop) : p ∧ q → q ∧ p :=
+begin
+  intro h,
+  cases h with hp hq,
+  split,
+  show q, from hq,
+  show p, from hp
+end
 
 /- 2.2. Redo the above proof, this time using structured proofs (with `assume`, `have`, and `show`)
 for the two subcases emerging from the introduction rule for `↔`. -/
@@ -148,14 +152,14 @@ for the two subcases emerging from the introduction rule for `↔`. -/
 example {α} (p q : α → Prop) : (∀x, p x ∧ q x) ↔ (∀x, p x) ∧ (∀x, q x) :=
 begin
   apply iff.intro,
-  intro h,
-  cases h with hp,
-  show ∀ (x : α), p x ∧ q x,
-  cases hqr with hq qr,
-
+  begin
+    assume hs,
 
     
-end
+    -- have hs, from and.elim,
+  end
+
+  end
 
 
 /- Question 3: The reverse of a list, revisited -/
