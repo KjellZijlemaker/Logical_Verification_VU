@@ -54,17 +54,17 @@ end
 -- these are copied from the exercise; there is no need to prove them again
 lemma em_imp_peirce : excluded_middle → peirce := 
 begin
-intros a b c d,
-apply d,
-intro e,
-apply or.elim,
-apply a c,
-intro f,
-exact f,
-intro g,
-apply false.elim,
-apply g,
-assumption
+  intros a b c d,
+  apply d,
+  intro e,
+  apply or.elim,
+  apply a c,
+  intro f,
+  exact f,
+  intro g,
+  apply false.elim,
+  apply g,
+  assumption
 
 
 
@@ -110,31 +110,31 @@ we have already proved. -/
 example {α} (p q : α → Prop) :
  (∀x, p x ∧ q x) ↔  (∀x, p x) ∧ (∀x, q x) :=
 begin
-apply iff.intro,
-intro ph,
-apply and.intro,
-intro sh,
-apply and.elim,
-apply ph,
-exact sh,
-intros lh qh,
-exact lh,
-intro eh,
-apply and.elim,
-apply ph,
-exact eh,
-intros ah bh,
-exact bh,
-intros newph newsh,
-apply and.intro,
-apply and.elim,
-apply newph,
-intros newph newsh,
-apply newph,
-apply and.elim,
-apply newph,
-intros qh yh,
-apply yh
+  apply iff.intro,
+  intro ph,
+  apply and.intro,
+  intro sh,
+  apply and.elim,
+  apply ph,
+  exact sh,
+  intros lh qh,
+  exact lh,
+  intro eh,
+  apply and.elim,
+  apply ph,
+  exact eh,
+  intros ah bh,
+  exact bh,
+  intros newph newsh,
+  apply and.intro,
+  apply and.elim,
+  apply newph,
+  intros newph newsh,
+  apply newph,
+  apply and.elim,
+  apply newph,
+  intros qh yh,
+  apply yh
 end 
 
 
@@ -187,13 +187,13 @@ def reverse {α} : list α → list α
 -- taken from lecture 1.2
 lemma reverse_append {α} : ∀xs ys : list α, reverse (xs ++ ys) = reverse ys ++ reverse xs:=
 begin
-intro s,
-induction s,
-simp[reverse],
-simp[reverse],
-intro l,
-rw[s_ih],
-simp
+  intro s,
+  induction s,
+  simp[reverse],
+  simp[reverse],
+  intro l,
+  rw[s_ih],
+  simp
 end
 
 /- 3.1. Prove the induction step in the proof below using the **calculational style**, following
