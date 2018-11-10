@@ -199,18 +199,13 @@ this proof sketch:
 lemma reverse_reverse {α} : ∀xs : list α, reverse (reverse xs) = xs
 | [] := by refl
 | (x :: xs) :=
-calc reverse (reverse (x :: xs))
-=              by ,
-    reverse (reverse xs ++ [x])
-=              by simp[reverse_append],
-    reverse [x] ++ reverse (reverse xs)     
-=              by simp[reverse, reverse_append],
-    reverse [x] ++ xs
-=              by simp[reverse],
-    [x] ++ xs
-=              by simp[reverse],
-    x :: xs
-=              by simp[reverse]
+calc reverse  (reverse (x :: xs)) 
+      =       x::xs                                 :     by simp[reverse, reverse_append, reverse, reverse_reverse xs]
+  ... =       reverse (reverse xs ++ [x])           :     by simp[reverse_append, reverse, reverse_reverse xs]
+  ... =       reverse [x] ++ reverse (reverse xs)   :     by simp[reverse, reverse_append]
+  ... =       reverse [x] ++ xs                     :     by simp[reverse, reverse_reverse xs]
+  ... =       [x] ++ xs                             :     by simp[reverse]
+  ... =       x :: xs                               :     by simp[reverse]
 
 /- 3.2 (**optional bonus**). Lean's library includes an operation called `list.reverse`. Its
 implementation is optimized to be tail-recursive, by means of an accumulator. Prove that the
