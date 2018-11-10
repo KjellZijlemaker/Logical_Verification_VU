@@ -137,14 +137,6 @@ intros qh yh,
 apply yh
 end 
 
-example (p q : Prop) : p ∧ q → q ∧ p :=
-begin
-  intro h,
-  cases h with hp hq,
-  split,
-  show q, from hq,
-  show p, from hp
-end
 
 /- 2.2. Redo the above proof, this time using structured proofs (with `assume`, `have`, and `show`)
 for the two subcases emerging from the introduction rule for `↔`. -/
@@ -154,11 +146,35 @@ begin
   apply iff.intro,
   begin
     assume hs,
-
-    
-    -- have hs, from and.elim,
+    apply and.intro,
+    begin
+      assume ph,
+      apply and.elim,
+      apply hs,exact ph,
+      intros a b,
+      assumption
+    end,
+    begin
+      assume sh,
+      apply and.elim,
+      apply hs, exact sh,
+      intros a b,
+      assumption
+    end
+  end,
+  begin
+    assume hs s,
+    apply and.elim,
+    apply hs,
+    assume ah bh,
+    apply and.intro,
+    begin
+      apply ah
+    end,
+    begin
+      apply bh
+    end
   end
-
   end
 
 
