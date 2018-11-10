@@ -169,7 +169,16 @@ def reverse {α} : list α → list α
 | (x :: xs) := reverse xs ++ [x]
 
 -- taken from lecture 1.2
-lemma reverse_append {α} : ∀xs ys : list α, reverse (xs ++ ys) = reverse ys ++ reverse xs := sorry
+lemma reverse_append {α} : ∀xs ys : list α, reverse (xs ++ ys) = reverse ys ++ reverse xs:=
+begin
+intro s,
+induction s,
+simp[reverse],
+simp[reverse],
+intro l,
+rw[s_ih],
+simp
+end
 
 /- 3.1. Prove the induction step in the proof below using the **calculational style**, following
 this proof sketch:
@@ -190,7 +199,18 @@ this proof sketch:
 lemma reverse_reverse {α} : ∀xs : list α, reverse (reverse xs) = xs
 | [] := by refl
 | (x :: xs) :=
-sorry
+calc reverse (reverse (x :: xs))
+=              by ,
+    reverse (reverse xs ++ [x])
+=              by simp[reverse_append],
+    reverse [x] ++ reverse (reverse xs)     
+=              by simp[reverse, reverse_append],
+    reverse [x] ++ xs
+=              by simp[reverse],
+    [x] ++ xs
+=              by simp[reverse],
+    x :: xs
+=              by simp[reverse]
 
 /- 3.2 (**optional bonus**). Lean's library includes an operation called `list.reverse`. Its
 implementation is optimized to be tail-recursive, by means of an accumulator. Prove that the
