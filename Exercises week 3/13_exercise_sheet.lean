@@ -65,26 +65,19 @@ def double_negation := ∀p : Prop, ¬¬ p → p
 
 lemma em_imp_peirce : excluded_middle → peirce :=
 begin
-assume p q s l,
-apply or.elim,
-apply p,
-apply l,
-intro sh,
-apply false.elim,
-apply sh,
-intro qh,
-apply or.elim,
-apply p,
-apply false.elim,
-intro l,
-apply or.elim,
-apply p,
-apply not sh
-
-
-
-
-
+  simp [excluded_middle, peirce],
+  dunfold not,
+  intro h,
+  intros p q hpqp,
+  apply or.elim (h p),
+  intro p,
+  assumption,
+  intro hpp,
+  apply hpqp,
+  intro hp,
+  apply false.elim,
+  apply hpp,
+  assumption
 end
 
 /- Hint: Try instantiating `q` with `false` in Peirce's law. -/

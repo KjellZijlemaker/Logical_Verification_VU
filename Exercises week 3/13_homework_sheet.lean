@@ -54,20 +54,19 @@ end
 -- these are copied from the exercise; there is no need to prove them again
 lemma em_imp_peirce : excluded_middle → peirce := 
 begin
-  intros a b c d,
-  apply d,
-  intro e,
-  apply or.elim,
-  apply a c,
-  intro f,
-  exact f,
-  intro g,
+  simp [excluded_middle, peirce],
+  dunfold not,
+  intro h,
+  intros p q hpqp,
+  apply or.elim (h p),
+  intro p,
+  assumption,
+  intro hpp,
+  apply hpqp,
+  intro hp,
   apply false.elim,
-  apply g,
+  apply hpp,
   assumption
-
-
-
 end
 
 lemma peirce_imp_dn : peirce → double_negation :=
