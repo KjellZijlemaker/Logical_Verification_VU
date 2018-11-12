@@ -9,6 +9,10 @@ def snoc {α : Type} : list α → α → list α
 | [] l := [] ++ [l]
 | (a::b) l := a :: b ++ [l]
 
+-- ZZZ: Jasmins solution using append.
+def snoc' {α : Type} : list α → α → list α
+| l x    := l ++ [x]
+
 #reduce snoc [] 5
 #reduce snoc [2,4,6] 8
 

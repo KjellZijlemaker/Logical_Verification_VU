@@ -19,6 +19,11 @@ def take {α : Type} : ℕ → list α → list α
 | (_ + 1)       []      :=      []
 | (m + 1)  (x::xs) :=      [x] ++ take m xs 
 
+-- ZZZ: Jasmins simpler take, see last line
+def take' {α : Type} : ℕ → list α → list α
+| 0        xs           := []
+| (_ + 1)  []           := []
+| (m + 1)  (x::xs)      := x :: take m xs 
 
 #reduce take 0 [3, 7, 11]   -- expected: []
 #reduce take 1 [3, 7, 11]   -- expected: [3]
@@ -70,6 +75,18 @@ unfold drop,
 simp[drop_drop m],
 end
 
+-- ZZZ: Jasmins solution
+lemma drop_drop' {α : Type} : ∀(m n : ℕ) (xs : list α), drop n (drop m xs) = drop (n + m) xs
+| 0       n xs        := by refl
+| (_ + 1) n []        := by simp
+| (m + 1) n (x :: xs)       :=
+begin
+rw[<-add_assoc n m 1],
+unfold drop,
+simp[drop, drop_drop' m]
+end
+
+
 
 lemma take_take {α : Type} : ∀(m : ℕ) (xs : list α), take m (take m xs) = take m xs
 | 0 m                    := by refl
@@ -93,6 +110,17 @@ simp,
 rw[xs_ih],
 simp[take_drop]
 end
+
+-- ZZZ: Jasmins nicer solutions
+lemma take_take' {α : Type} : ∀(m : ℕ) (xs : list α), take m (take m xs) = take m xs
+| 0       _         := by refl
+| (_ + 1) []        := by refl
+| (m + 1) (x :: xs) := by simp [take, take_take' m xs]
+
+lemma take_drop' {α : Type} : ∀(n : ℕ) (xs : list α), take n xs ++ drop n xs = xs
+| 0       _         := by refl
+| (_ + 1) []        := by refl
+| (m + 1) (x :: xs) := by simp [take, drop, take_drop' m]
 
 
 
@@ -120,6 +148,11 @@ simp[sum_upto_eq],
 simp[mul_add],
 simp[mul_comm]
 end
+
+-- ZZZ: consec simps can be combined into one
+lemma sum_upto_eq' : ∀m : ℕ, 2 * sum_upto id m = m * (m + 1) 
+| 0               := by refl
+| (m + 1)         := begin simp [sum_upto, mul_add, sum_upto_eq' m, add_mul], ac_refl end
 
 /- 2.2. Prove the following property of `sum_upto`. -/
 
