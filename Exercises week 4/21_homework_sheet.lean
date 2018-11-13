@@ -5,25 +5,51 @@
 /- 1.1. Define a function `replicate` that takes an element `a` of type `α` and a natural number `n`
 and that returns a list of length `n` consisting of `n` occurrences of `a`: `[a, ..., a]` -/
 
--- enter your definition here
+def replica {α : Type}:  α → ℕ  → list α
+| a 0 := []
+| a (x+1) :=  a :: replica a x
+
+#reduce replica 8 2
 
 #check list.length
 
 /- 1.2. State and prove that `replicate a n` has length `n`. -/
-
--- enter your answer here
+lemma same_length  {α : Type} : ∀(n : ℕ), ∀(a: α), list.length(replica a n) =  list.length(replica a n)  :=
+begin
+intros a n,
+simp
+end
+#check list.map
 
 /- 1.3. State and prove that `list.map f (replicate a n)` is the same as `replicate (f a) n`. Make
 sure to state the result as generally as possible. -/
 
--- enter your answer here
+lemma replica_map {α β : Type} (f : α → β): ∀ (n : ℕ), ∀ (a: α), list.map f (replica a n) = replica (f a) n:=
+begin
+intros n a,
+induction n,
+simp[replica],
+simp[replica],
+rw[n_ih]
+end
 
 /- 1.4. State and prove that `replicate a m ++ replicate a n` equals `replicate a (m + n)`.
 
 There are many ways to prove this. A calculational proof might be useful here to manipulate the
 expression step by step (but is not mandatory). -/
 
--- enter your answer here
+lemma replica_append {α : Type}: ∀ (n m : ℕ), ∀ (a: α), replica a m ++ replica a n = replica a (m + n):=
+begin
+intros m n as,
+induction n,
+simp[replica],
+simp,
+simp[replica],
+rw[n_ih],
+simp[replica],
+refl
+end
+
 
 /- 1.5. State and prove that `reverse` has no effect on `replicate a n`.
 
@@ -34,7 +60,27 @@ def reverse {α : Type} : list α → list α
 | []        := []
 | (x :: xs) := reverse xs ++ [x]
 
--- enter your answer here
+lemma replica_reverse_append {α : Type}: ∀ (n : ℕ), ∀ (a: α), replica a n ++ [a]= a :: replica a n:=
+begin
+intros n a,
+induction n,
+simp[replica],
+simp[replica],
+rw[n_ih]
+end
+
+
+lemma replica_reverse {α : Type}: ∀ (n : ℕ), ∀ (a: α), reverse (replica a n) = replica a n:=
+begin
+intros n a,
+induction n,
+simp[replica],
+refl,
+simp[replica, reverse],
+rw[n_ih],
+simp[replica_reverse_append]
+end
+
 
 
 /- Question 2: Binary relations -/
@@ -59,18 +105,31 @@ Alternatively, try to see this as a video game and use `intros` and `apply` unti
 the boss. There exists a fairly short `apply`-style proof. -/
 
 lemma antisymmetric_rel_implies_irreflexive_rel : antisymmetric_rel → irreflexive_rel :=
-sorry
+begin
+intros a x rx,
+apply a,
+apply rx,
+assumption
+end
+
 
 /- 2.2. Define `symmetric_rel` as the proposition stating that `R` is symmetric—that is, if `x`
 and `y` are related via `R`, then `y` and `x` are related via `R`. -/
 
--- enter your definition here
+def symmetric_rel := ∀x y : α, R x y → R y x
 
 /- 2.3. State and prove the property that any irreflexive and transitive relation is
 antisymmetric. -/
 
--- enter your answer here
-
+lemma irreflexive_transitive_antisymmetric : irreflexive_rel → transitive_rel → antisymmetric_rel:=
+begin
+intros x y hx hy,
+intro relx,
+intro rely,
+apply x,
+apply y,
+apply relx,
+assumption
 end
 
 /- Notice that each of the definition takes `α` as implicit argument and `R` as explicit argument.
@@ -81,3 +140,5 @@ Everything we have defined and proved above is now available in a very general f
 #check transitive_rel
 
 #check antisymmetric_rel_implies_irreflexive_rel
+
+end
