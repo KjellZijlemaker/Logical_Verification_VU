@@ -54,18 +54,17 @@ end
 -- these are copied from the exercise; there is no need to prove them again
 lemma em_imp_peirce : excluded_middle → peirce := 
 begin
-  simp [excluded_middle, peirce],
-  dunfold not,
-  intro h,
-  intros p q hpqp,
-  apply or.elim (h p),
+  intros ex p,
+  intros a b,
+  apply or.elim,
+  apply ex,
+  intro c,
+  apply c,
+  intro d,
+  apply b,
   intro p,
-  assumption,
-  intro hpp,
-  apply hpqp,
-  intro hp,
   apply false.elim,
-  apply hpp,
+  apply d,
   assumption
 end
 
@@ -97,9 +96,79 @@ end
 and `double_negation`. State and prove the three missing implications, exploiting the three theorems
 we have already proved. -/
 
--- enter your solution here
+lemma dn_em_imp : excluded_middle → double_negation :=
+begin
+  intros a b c,
+  apply em_imp_peirce,
+  intro l,
+  apply or.elim,
+  apply a,
+  intro l,
+  apply l,
+  intro notl,
+  apply or.intro_right,
+  intro l,
+  apply notl,
+  apply or.intro_left,
+  assumption,
+  intro k,
+  apply k,
+  apply or.elim,
+  apply a,
+  apply k,
+  intro notb,
+  apply false.elim,
+  apply c,
+  assumption
+end
 
 
+lemma imp_em_peirce :  peirce → excluded_middle := 
+begin
+  intros a b,
+  apply dn_em_imp,
+  intro l,
+  apply a,
+  intro s,
+  apply or.inl,
+  apply s,
+  apply dn_imp_em,
+  intro newl,
+  intro double,
+  apply a,
+  intro b,
+  apply b,
+  apply false.elim,
+  apply double,
+  intro falsenw,
+  apply or.elim,
+  
+  
+
+
+
+end
+
+lemma peirce_dn_imp :  double_negation → peirce:=
+begin
+intros a b c,
+intro bnew,
+apply peirce_imp_dn,
+intro p,
+intro newp,
+intro t,
+apply t,
+intro newp,
+apply a,
+intro n,
+apply n,
+
+
+
+apply a,
+intro false,
+
+end
 /- Question 2: Predicate logic -/
 
 /- 2.1. Prove the distributivity of `∀` over `∧` using `intro(s)`, `apply`, and `exact`. -/
@@ -150,15 +219,15 @@ begin
       assume ph,
       apply and.elim,
       apply hs,exact ph,
-      intros a b,
-      assumption
+      intros ah bh,
+      show p ph, from ah
     end,
     begin
       assume sh,
       apply and.elim,
       apply hs, exact sh,
-      intros a b,
-      assumption
+      intros ah bh,
+      show q sh, from bh
     end
   end,
   begin
@@ -167,14 +236,10 @@ begin
     apply hs,
     assume ah bh,
     apply and.intro,
-    begin
-      apply ah
-    end,
-    begin
-      apply bh
-    end
+    apply ah,
+    apply bh
   end
-  end
+end
 
 
 /- Question 3: The reverse of a list, revisited -/

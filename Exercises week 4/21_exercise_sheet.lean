@@ -9,14 +9,19 @@ predicate `α → bool`.
 `decidable_eq` is the type class of types whose equality is decidable. -/
 
 def count {α : Type} (a : α) [decidable_eq α] : list α → ℕ
-:= sorry
+| [] := 0
+| (x :: xs) := count xs + 1
+
+
 
 /- 1.2. Test your definition of `count` on a few examples to convince yourself that it is
 correct. This is something you should always do regardless of whether we ask for it.
 
 You can use `#reduce` or (if `#reduce` fails) `#eval` to do this. -/
 
--- enter your `#reduce` or `#eval` calls here
+#reduce count "a" ["a", "a"] 
+#reduce count 2 [2,2,2,2,2]
+#reduce count 0 [0,0,0,0]
 
 /- 1.3. Complete the following proof (or replace it with a new proof structure of your own).
 
@@ -30,15 +35,14 @@ carry out the proof, you could reconsider revising your answer to question 1.1. 
 
 lemma count_le_length {α : Type} (a : α) [decidable_eq α] :
   ∀xs : list α, count a xs ≤ list.length xs
-| [] :=
-  sorry
+| [] := by refl
 | (x :: xs) :=
   calc count a (x :: xs) = count a xs + (if x = a then 1 else 0) :
-    sorry
+    begin repeat{simp[count]}, induction xs, simp[count],  end
   ... ≤ list.length xs + (if x = a then 1 else 0) :
     sorry
   ... ≤ list.length (x :: xs) :
-    sorry
+    begin repeat{simp[count]}, simp[count_le_length a] end
 
 
 /- Question 2: Removing duplicates -/

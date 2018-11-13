@@ -33,7 +33,9 @@ Hint: Through this exercise, try to keep your definitions as simple as possible,
 affect proving ease further down. -/
 
 def alphabet_list : list (tree α) → list α
-:= sorry
+| [] := []
+| (x :: xs) := alphabet_list xs ++ alphabet x
+
 
 /- A tree is consistent if it contains no duplicate labels. This can be defined as an inductive
 predicate. -/
@@ -47,7 +49,11 @@ inductive consistent : tree α → Prop
 /- 1.2. A forest is consistent if it contains no duplicate labels (even in different trees). Define
 an inductive predicate `consistent_list` that captures this property. -/
 
--- enter your definition here
+inductive consistent_trees : list (tree α) → Prop
+| consistent_leaf (w : ℕ) (a: list (tree α )) : consistent_trees a
+| consistent_inner (w : ℕ) (l : list (tree α)) (r : list(tree α)) :
+  consistent_trees l → consistent_trees r → (∀a, a ∈ alphabet_list l → a ∈ alphabet_list r → false) →
+  consistent_trees r
 
 /- 1.3. The height of a tree is the length of the longest path from its root node to a leaf. A tree
 consisting of a single node has height 0 by convention. Define a recursive function `height` that
@@ -55,7 +61,11 @@ computes this.
 
 Hint: You may use the built-in `max` function. -/
 
--- enter your definition here
+def height {α: Type} (a : tree α): tree α → ℕ
+| empty := 0
+| a := 1 + max 
+
+#reduce height 3
 
 /- 1.4. Now define the same function on forests, where the height of a forest is defined as the
 height of its tallest tree. -/
