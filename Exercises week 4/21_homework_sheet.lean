@@ -1,22 +1,26 @@
 /- Homework 2.1: Functional Programming — Lists -/
 
-/- Question 1: Replicating an element -/
+/- Question 1: replicateting an element -/
 
 /- 1.1. Define a function `replicate` that takes an element `a` of type `α` and a natural number `n`
 and that returns a list of length `n` consisting of `n` occurrences of `a`: `[a, ..., a]` -/
 
-def replica {α : Type}:  α → ℕ  → list α
-| a 0 := []
-| a (x+1) :=  a :: replica a x
+def replicate {α : Type} (a: α):  ℕ  → list α
+|  0 := []
+|  (x+1) :=  a :: replicate x
 
-#reduce replica 8 2
+#reduce replicate 2 9
+#reduce replicate 1 9
 
 #check list.length
 
 /- 1.2. State and prove that `replicate a n` has length `n`. -/
-lemma same_length  {α : Type} : ∀(n : ℕ), ∀(a: α), list.length(replica a n) =  list.length(replica a n)  :=
+lemma same_length  {α : Type} : ∀(n : ℕ), ∀(a: α), list.length(replicate a n) =  n  :=
 begin
 intros a n,
+induction a,
+repeat{simp[replicate]},
+rw[a_ih],
 simp
 end
 #check list.map
@@ -24,12 +28,11 @@ end
 /- 1.3. State and prove that `list.map f (replicate a n)` is the same as `replicate (f a) n`. Make
 sure to state the result as generally as possible. -/
 
-lemma replica_map {α β : Type} (f : α → β): ∀ (n : ℕ), ∀ (a: α), list.map f (replica a n) = replica (f a) n:=
+lemma replicate_map {α β : Type} (f : α → β): ∀ (n : ℕ), ∀ (a: α), list.map f (replicate a n) = replicate (f a) n:=
 begin
 intros n a,
 induction n,
-simp[replica],
-simp[replica],
+repeat{simp[replicate]},
 rw[n_ih]
 end
 
@@ -38,15 +41,13 @@ end
 There are many ways to prove this. A calculational proof might be useful here to manipulate the
 expression step by step (but is not mandatory). -/
 
-lemma replica_append {α : Type}: ∀ (n m : ℕ), ∀ (a: α), replica a m ++ replica a n = replica a (m + n):=
+lemma replicate_append {α : Type}: ∀ (n m : ℕ), ∀ (a: α), replicate a m ++ replicate a n = replicate a (m + n):=
 begin
 intros m n as,
 induction n,
-simp[replica],
-simp,
-simp[replica],
+repeat{simp[replicate]},
 rw[n_ih],
-simp[replica],
+simp[replicate],
 refl
 end
 
@@ -60,25 +61,25 @@ def reverse {α : Type} : list α → list α
 | []        := []
 | (x :: xs) := reverse xs ++ [x]
 
-lemma replica_reverse_append {α : Type}: ∀ (n : ℕ), ∀ (a: α), replica a n ++ [a]= a :: replica a n:=
+lemma replicate_reverse_append {α : Type}: ∀ (n : ℕ), ∀ (a: α), replicate a n ++ [a]= a :: replicate a n:=
 begin
 intros n a,
 induction n,
-simp[replica],
-simp[replica],
+repeat{
+simp[replicate]},
 rw[n_ih]
 end
 
 
-lemma replica_reverse {α : Type}: ∀ (n : ℕ), ∀ (a: α), reverse (replica a n) = replica a n:=
+lemma replicate_reverse {α : Type}: ∀ (n : ℕ), ∀ (a: α), reverse (replicate a n) = replicate a n:=
 begin
 intros n a,
 induction n,
-simp[replica],
+simp[replicate],
 refl,
-simp[replica, reverse],
+simp[replicate, reverse],
 rw[n_ih],
-simp[replica_reverse_append]
+simp[replicate_reverse_append]
 end
 
 
