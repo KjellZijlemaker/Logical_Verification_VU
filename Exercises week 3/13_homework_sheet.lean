@@ -137,36 +137,33 @@ begin
   intro double,
   apply a,
   intro b,
+  apply false.elim,
+  apply double,
   apply b,
   apply false.elim,
   apply double,
-  intro falsenw,
-  apply or.elim,
-  
-  
-
-
-
+  intro s,
+  apply double,
+  apply b,
+  assumption,
+  intro s,
+  apply s,
+  apply or.inr,
+  intro l,
+  apply s,
+  apply or.inl,
+  assumption
 end
 
 lemma peirce_dn_imp :  double_negation → peirce:=
 begin
 intros a b c,
-intro bnew,
+intro s,
 apply peirce_imp_dn,
-intro p,
-intro newp,
-intro t,
-apply t,
-intro newp,
-apply a,
-intro n,
-apply n,
-
-
-
-apply a,
-intro false,
+intro ex,
+intros l q,
+apply q,
+intro ex,
 
 end
 /- Question 2: Predicate logic -/
