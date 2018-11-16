@@ -1,0 +1,11 @@
+begin
+apply iff.intro,
+assume hpq,
+apply and.intro,
+assume a,
+have b := and.left (hpq a),
+show p a, from b,
+assume a,
+have c := and.right (hpq a),
+show q a, from c,
+assume hpq,
