@@ -86,14 +86,25 @@ def depth : tree α → α → ℕ
 /- 1.6. State and prove that the depth of a symbol in a tree is less than or equal to the height of
 the tree.
 
-
-
 Hint: You might find the lemmas `le_max_left`, `add_le_add_left`, and similarly named ones useful.
 Use Visual Studio Code's Command Palette to explore Lean's library (e.g. `#le_max`). -/
-lemma depthlessequal {α: Type} (a: α) : depth (tree a) ≤ height (tree)
+lemma depthlessequal: ∀t: tree α, consistent t → ∃a ∈ alphabet t, depth t a ≤ height t 
+| (leaf _ _) _ :=
+  begin
+    repeat {apply exists.intro},
+    simp[alphabet],
+    simp[depth, height]
+  end
+| (inner _ _ _) x :=
+  begin
+    repeat {apply exists.intro},
+    simp[alphabet],
+    apply or.inl,
+    apply _inst_1
+  end
 
 /- 1.7. A tree's height is not only an upper bound on the depth of symbols stored in the tree. It is
-also a tight bound. Complete the following proof. -/
+also a tight bound. Complete the folloing proof. -/
 
 lemma exists_at_height : ∀t : tree α, consistent t → ∃a ∈ alphabet t, depth t a = height t
 | (leaf _ a)      ct :=
@@ -103,17 +114,9 @@ lemma exists_at_height : ∀t : tree α, consistent t → ∃a ∈ alphabet t, d
     simp[depth, height]
   end
 | t@(inner _ l r) ct :=  -- `t@` introduces the alias `t` for `inner _ l r`
-  have cl : consistent l :=
-   begin
-    have bla: ∀ (t : tree α), consistent t → (∃ (a : α) (H : a ∈ alphabet t), depth t a = height t) ,
-    intro a,
-    intro b,
-    repeat{apply exists.intro},
+  have cl : consistent l := sorry,
+  have cr : consistent r := sorry,
 
-
-   end
-  have cr : consistent r :=
-   sorry,
   let ⟨b, b_in_alpha_l, depth_l_b_eq_height_l⟩ := exists_at_height l cl in
   let ⟨c, c_in_alpha_r, depth_r_c_eq_height_r⟩ := exists_at_height r cr in
   let b_or_c := if height r ≤ height l then b else c in
@@ -122,7 +125,8 @@ lemma exists_at_height : ∀t : tree α, consistent t → ∃a ∈ alphabet t, d
     repeat {apply exists.intro},
     simp[alphabet],
     apply or.inr,
-    show b_or_c ∈ alphabet r, from c_in_alpha_r 
+    cases b_or_c,
+  
     
     
    end

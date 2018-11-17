@@ -6,11 +6,12 @@
 and that returns a list of length `n` consisting of `n` occurrences of `a`: `[a, ..., a]` -/
 
 def replicate {α : Type} (a: α):  ℕ  → list α
-|  0 := []
-|  (x+1) :=  a :: replicate x
+|  0  := []
+|  (x+1)  :=  a :: replicate x 
 
 #reduce replicate 2 9
 #reduce replicate 1 9
+#reduce replicate 2 2
 
 #check list.length
 

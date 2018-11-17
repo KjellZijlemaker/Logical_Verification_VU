@@ -155,17 +155,17 @@ begin
   assumption
 end
 
-lemma peirce_dn_imp :  double_negation → peirce:=
-begin
-intros a b c,
-intro s,
-apply peirce_imp_dn,
-intro ex,
-intros l q,
-apply q,
-intro ex,
+-- lemma peirce_dn_imp :  double_negation → peirce:=
+-- begin
+-- intros a b c,
+-- intro s,
+-- apply peirce_imp_dn,
+-- intro ex,
+-- intros l q,
+-- apply q,
+-- intro ex,
 
-end
+-- end
 /- Question 2: Predicate logic -/
 
 /- 2.1. Prove the distributivity of `∀` over `∧` using `intro(s)`, `apply`, and `exact`. -/
@@ -209,33 +209,21 @@ for the two subcases emerging from the introduction rule for `↔`. -/
 example {α} (p q : α → Prop) : (∀x, p x ∧ q x) ↔ (∀x, p x) ∧ (∀x, q x) :=
 begin
   apply iff.intro,
-  begin
-    assume hs,
-    apply and.intro,
-    begin
-      assume ph,
-      apply and.elim,
-      apply hs,exact ph,
-      intros ah bh,
-      show p ph, from ah
-    end,
-    begin
-      assume sh,
-      apply and.elim,
-      apply hs, exact sh,
-      intros ah bh,
-      show q sh, from bh
-    end
-  end,
-  begin
-    assume hs s,
-    apply and.elim,
-    apply hs,
-    assume ah bh,
-    apply and.intro,
-    apply ah,
-    apply bh
-  end
+  assume hpq,
+  apply and.intro,
+  assume ah,
+  have b := and.left (hpq ah),
+  show p ah, from b,
+  assume bh,
+  have c := and.right (hpq bh),
+  show q bh, from c,
+  assume hpq,
+  assume dh,
+  apply and.intro,
+  have e := and.left hpq dh,
+  show p dh, from e,
+  have f := and.right hpq dh,
+  show q dh, from f
 end
 
 
@@ -295,4 +283,15 @@ Command key pressed and click the name.
 #check list.reverse
 
 lemma list_reverse_eq_reverse {α} : ∀xs : list α, list.reverse xs = reverse xs
-:= sorry
+| [] := by refl
+| (x :: xs) := 
+begin 
+simp[reverse],
+simp[list.reverse],
+simp[list.reverse_core],
+induction xs,
+simp[reverse, list.reverse_core],
+simp[reverse,list.reverse_core],
+simp[list.reverse],
+
+end
