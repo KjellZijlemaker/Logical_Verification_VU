@@ -81,30 +81,25 @@ you can arbitrarily choose which occurrence to consider (e.g. the leftmost one).
 
 def depth : tree α → α → ℕ
 | (leaf _ a) x := 1
-| (inner _ l r) x := 0
+| (inner _ l r) x := depth l x + depth r x 
+
 
 /- 1.6. State and prove that the depth of a symbol in a tree is less than or equal to the height of
 the tree.
 
 Hint: You might find the lemmas `le_max_left`, `add_le_add_left`, and similarly named ones useful.
 Use Visual Studio Code's Command Palette to explore Lean's library (e.g. `#le_max`). -/
-lemma depthlessequal: ∀t: tree α, consistent t → ∃a ∈ alphabet t, depth t a ≤ height t 
-| (leaf _ _) _ :=
-  begin
-    repeat {apply exists.intro},
-    simp[alphabet],
-    simp[depth, height]
-  end
-| (inner _ _ _) x :=
-  begin
-    repeat {apply exists.intro},
-    simp[alphabet],
-    apply or.inl,
-    apply _inst_1
+lemma depthlessequal :∀t : tree α, consistent t → ∃a ∈ alphabet t, depth t a <= height t
+| (leaf _ a)      ct := begin repeat {apply exists.intro}, simp[alphabet], simp[depth, height] end
+| (inner _ l r)   ct := 
+begin 
+ apply exists.elim(
+
+ 
   end
 
 /- 1.7. A tree's height is not only an upper bound on the depth of symbols stored in the tree. It is
-also a tight bound. Complete the folloing proof. -/
+also a tight bound. Complete the following proof. -/
 
 lemma exists_at_height : ∀t : tree α, consistent t → ∃a ∈ alphabet t, depth t a = height t
 | (leaf _ a)      ct :=
@@ -114,19 +109,34 @@ lemma exists_at_height : ∀t : tree α, consistent t → ∃a ∈ alphabet t, d
     simp[depth, height]
   end
 | t@(inner _ l r) ct :=  -- `t@` introduces the alias `t` for `inner _ l r`
-  have cl : consistent l := sorry,
-  have cr : consistent r := sorry,
+  have cl : consistent l :=
+   begin
+    have bla: ∀ (t : tree α), consistent t → (∃ (a : α) (H : a ∈ alphabet t), depth t a = height t) ,
+    intro a,
+    intro b,
+    repeat{apply exists.intro},
+    simp[exists_at_height ],
 
+   end
+  have cr : consistent r :=
+   sorry,
   let ⟨b, b_in_alpha_l, depth_l_b_eq_height_l⟩ := exists_at_height l cl in
   let ⟨c, c_in_alpha_r, depth_r_c_eq_height_r⟩ := exists_at_height r cr in
   let b_or_c := if height r ≤ height l then b else c in
   have borc_in_alpha_t : b_or_c ∈ alphabet t :=
    begin
+   cases ct ,
     repeat {apply exists.intro},
     simp[alphabet],
     apply or.inr,
-    cases b_or_c,
-  
+    simp [b_or_c],
+    by_cases (height r ≤ height l),
+    simp[h],
+    simp *,
+
+
+
+
     
     
    end

@@ -19,9 +19,10 @@ variables {M : Type → Type} [monad M] [is_lawful_monad M]
 
 **Hint:** The challenge is to find a way to create `M β`. Follow the types. -/
 
-def map {α β} (f : α → β) (m : M α) : M β :=
-:= sorry
-
+def map {α β} (f : α → β) (m : M α) : M β:=
+do a ← m, 
+   b ← f a,
+   return b
 /- 1.2. Prove the identity law for `map`. -/
 
 lemma map_id {α} (m : M α) : map id m = m :=
