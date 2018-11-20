@@ -10,7 +10,7 @@ define `map`. The _functorial properties_ (`map_id` and `map_map`) are derived f
 
 This time, we use Lean's monad definition. In combination, `monad` and `is_lawful_monad` include the
 same constants, laws, and syntactic sugar as the `monad` type class from the lecture. -/
-
+ 
 section map
 
 variables {M : Type → Type} [monad M] [is_lawful_monad M]
@@ -21,12 +21,15 @@ variables {M : Type → Type} [monad M] [is_lawful_monad M]
 
 def map {α β} (f : α → β) (m : M α) : M β:=
 do a ← m, 
-   b ← f a,
-   return b
+   b ← m,
+   f b
 /- 1.2. Prove the identity law for `map`. -/
 
 lemma map_id {α} (m : M α) : map id m = m :=
-sorry
+begin
+simp[map],
+
+end
 
 /- 1.3. Prove the composition law for `map`. -/
 
@@ -61,16 +64,17 @@ instance : monad list :=
 /- 2.1. Prove the following properties of `bind` under the empty list (`[]`), the list constructor
 (`::`), and `++`. -/
 
-@[simp] lemma bind_nil {α β} (f : α → list β) : [] >>= f = [] :=
-sorry
+@[simp] lemma bind_nil {α β} (f : α → list β) : [] >>= f = [] := by refl
 
 @[simp] lemma bind_cons {α β} (f : α → list β) (a : α) (l : list α) :
-  (a :: l) >>= f = f a ++ (l >>= f) :=
-sorry
+  (a :: l) >>= f = f a ++ (l >>= f) := by simp[bind]
 
 @[simp] lemma bind_append {α β} (f : α → list β) :
-  ∀l l':list α, (l ++ l') >>= f = (l >>= f) ++ (l' >>= f)
-:= sorry
+  ∀l l':list α, (l ++ l') >>= f = (l >>= f) ++ (l' >>= f):=
+  begin
+  intros a b,
+  simp[bind]
+  end
 
 /- 2.2. Prove the monadic laws for `list`.
 
@@ -78,19 +82,17 @@ sorry
 `pure_eq_singleton` to unfold the definition or `show` to state the lemma statement using `bind` and
 `[...]`. -/
 
-lemma pure_bind {α β} (a : α) (f : α → list β) : (pure a >>= f) = f a :=
-sorry
+lemma pure_bind {α β} (a : α) (f : α → list β) : (pure a >>= f) = f a := by simp[pure_eq_singleton]
 
-lemma bind_pure {α} : ∀l : list α, l >>= pure = l
-:= sorry
+lemma bind_pure {α} : ∀l : list α, l >>= pure = l := by simp[pure_eq_singleton]
 
 lemma bind_assoc {α β γ} (f : α → list β) (g : β → list γ) :
   ∀l : list α, (l >>= f) >>= g = l >>= (λa, f a >>= g)
-:= sorry
+:= begin intro s, simp[bind], cases s, refl, simp[bind],   end
 
 lemma bind_pure_comp_eq_map {α β} {f : α → β} :
   ∀l : list α, l >>= (pure ∘ f) = list.map f l
-:= sorry
+:= begin  simp[bind], simp[pure], intro s, cases s, refl, simp*, end
 
 /- 2.3 **optional**. Register `list` as a lawful monad. This may be a challenge. -/
 

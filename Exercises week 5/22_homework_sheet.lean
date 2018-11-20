@@ -89,13 +89,19 @@ the tree.
 
 Hint: You might find the lemmas `le_max_left`, `add_le_add_left`, and similarly named ones useful.
 Use Visual Studio Code's Command Palette to explore Lean's library (e.g. `#le_max`). -/
-lemma depthlessequal :∀t : tree α, consistent t → ∃a ∈ alphabet t, depth t a <= height t
-| (leaf _ a)      ct := begin repeat {apply exists.intro}, simp[alphabet], simp[depth, height] end
+lemma depthlessequal :∀t : tree α, consistent t → ∀a ∈ alphabet t, depth t a <= height t
+| (leaf _ a)      ct := begin repeat {apply exists.intro}, simp[alphabet], simp[depth, height], intro s, simp[le_of_eq] end
 | (inner _ l r)   ct := 
 begin 
- apply exists.elim(
-
+ repeat{apply exists.intro},
+ simp[alphabet],
+ simp[depth, height],
+ intro s,
+ intro a,
+ simp[le_max_left],
  
+
+
   end
 
 /- 1.7. A tree's height is not only an upper bound on the depth of symbols stored in the tree. It is
@@ -114,8 +120,9 @@ lemma exists_at_height : ∀t : tree α, consistent t → ∃a ∈ alphabet t, d
     have bla: ∀ (t : tree α), consistent t → (∃ (a : α) (H : a ∈ alphabet t), depth t a = height t) ,
     intro a,
     intro b,
-    repeat{apply exists.intro},
-    simp[exists_at_height ],
+    apply exists_at_height,
+    assumption,
+    
 
    end
   have cr : consistent r :=
@@ -125,16 +132,13 @@ lemma exists_at_height : ∀t : tree α, consistent t → ∃a ∈ alphabet t, d
   let b_or_c := if height r ≤ height l then b else c in
   have borc_in_alpha_t : b_or_c ∈ alphabet t :=
    begin
-   cases ct ,
     repeat {apply exists.intro},
     simp[alphabet],
     apply or.inr,
     simp [b_or_c],
-    by_cases (height r ≤ height l),
-    simp[h],
-    simp *,
-
-
+    by_cases (ite (height r ≤ height l) b c ∈ alphabet r),
+    
+  
 
 
     
