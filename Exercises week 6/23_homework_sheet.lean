@@ -20,22 +20,20 @@ variables {M : Type → Type} [monad M] [is_lawful_monad M]
 **Hint:** The challenge is to find a way to create `M β`. Follow the types. -/
 
 def map {α β} (f : α → β) (m : M α) : M β:=
-do a ← m, 
-   b ← m,
-   f b
+do a <- m,
+   return (f a)
 /- 1.2. Prove the identity law for `map`. -/
 
-lemma map_id {α} (m : M α) : map id m = m :=
-begin
-simp[map],
-
-end
+lemma map_id {α} (m : M α) : map id m = m := by simp[map]
 
 /- 1.3. Prove the composition law for `map`. -/
 
 lemma map_map {α β γ} (f : α → β) (g : β → γ) (m : M α) :
   map g (map f m) = map (g ∘ f) m :=
-sorry
+begin
+simp[map, return],
+
+end
 
 end map
 
@@ -89,12 +87,12 @@ lemma bind_pure {α} : ∀l : list α, l >>= pure = l := by simp[pure_eq_singlet
 lemma bind_assoc {α β γ} (f : α → list β) (g : β → list γ) :
   ∀l : list α, (l >>= f) >>= g = l >>= (λa, f a >>= g)
 | [] := by refl
-| (x::xs) :=  begin simp[bind], simp[bind_append ]  end
+| (x::xs) := by simp[bind_assoc xs] 
 
 lemma bind_pure_comp_eq_map {α β} {f : α → β} :
   ∀l : list α, l >>= (pure ∘ f) = list.map f l
 | [] := by refl
-| (x::xs) := begin  simp[bind], simp[pure], simp[bind_pure_comp_eq_map xs] end
+| (x::xs) := begin simp[bind_pure_comp_eq_map xs], simp[pure], simp[list.ret] end
 
 /- 2.3 **optional**. Register `list` as a lawful monad. This may be a challenge. -/
 
