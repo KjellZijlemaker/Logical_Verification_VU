@@ -88,11 +88,13 @@ lemma bind_pure {α} : ∀l : list α, l >>= pure = l := by simp[pure_eq_singlet
 
 lemma bind_assoc {α β γ} (f : α → list β) (g : β → list γ) :
   ∀l : list α, (l >>= f) >>= g = l >>= (λa, f a >>= g)
-:= begin intro s, simp[bind], cases s, refl, simp[bind],   end
+| [] := by refl
+| (x::xs) :=  begin simp[bind], simp[bind_append ]  end
 
 lemma bind_pure_comp_eq_map {α β} {f : α → β} :
   ∀l : list α, l >>= (pure ∘ f) = list.map f l
-:= begin  simp[bind], simp[pure], intro s, cases s, refl, simp*, end
+| [] := by refl
+| (x::xs) := begin  simp[bind], simp[pure], simp[bind_pure_comp_eq_map xs] end
 
 /- 2.3 **optional**. Register `list` as a lawful monad. This may be a challenge. -/
 
