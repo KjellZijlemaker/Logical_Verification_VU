@@ -4,7 +4,12 @@ open expr
 open tactic
 open declaration
 
-
+example {a b c d e f : Prop} {p : ℕ → Prop} : a → ¬ b ∧ (c ↔ d) :=
+begin
+intros s,
+apply and.intro,
+intro l,
+end
 /- Question 1: A `safe` tactic -/
 
 /- We develop a tactic that applies all safe introduction and elimination rules for the connectives
@@ -16,7 +21,12 @@ easily be instantiated accidentally with the wrong terms.) We proceed in three s
 `↔`, and `→`/`∀`. (Hint: You can use `tactic.intro` or `tactic.intro1` for some of these.) -/
 
 meta def safe_intros : tactic unit :=
-sorry
+do
+tactic.intros,
+repeat (applyc `and.intro),
+tactic.intro `a2,
+repeat (applyc `iff.intro)
+
 
 example {a b c d e f : Prop} {p : ℕ → Prop} : a → ¬ b ∧ (c ↔ d) :=
 begin
@@ -45,8 +55,11 @@ end
 
 /- 1.2. Develop a `safe_destructs` tactic that eliminates `false`, `∧`, `∨`, `↔`, and `∃`. -/
 
-meta def safe_destructs : tactic unit :=
-sorry
+meta def safe_destructs : tactic unit := do
+tactic.intros,
+applyc (`false.elim),
+applyc (`and.elim)
+
 
 example {a b c d e f : Prop} {p : ℕ → Prop}
   (hneg: ¬ a) (hand : a ∧ b ∧ c) (hor : c ∨ d) (himp : b → e) (hiff : e ↔ f) (hex : ∃x, p x) :
