@@ -72,17 +72,33 @@ exercise. -/
 variables {s s₁ s₂ : list char} {r r₁ r₂  : regex} {c : char}
 
 @[simp] lemma accept_char : accept (regex.char c) s ↔ s = [c] :=
-sorry
+iff.intro
+(assume h, match s, h with _, accept.char)
 
-@[simp] lemma accept_nothing : ¬ accept regex.nothing s
-:= sorry
+@[simp] lemma accept_nothing : ¬ accept regex.nothing s:=
+begin
+intro a,
+cases s,
+repeat {cases a}
+end
 
 @[simp] lemma accept_empty : accept regex.empty s ↔ s = [] :=
-sorry
+iff.intro
+(assume h, match s, h with _, accept.empty := begin cases _x, simp end end)
 
 @[simp] lemma accept_concat :
   accept (regex.concat r₁ r₂) s ↔ (∃s₁ s₂, accept r₁ s₁ ∧ accept r₂ s₂ ∧ s = s₁ ++ s₂) :=
-sorry
+  begin
+  apply iff.intro,
+  intro s,
+  cases s,
+  cases s_h₁,
+  cases s_h₂,
+  simp,
+  cases s_h₁,
+  cases s_h₂,
+  
+  end
 
 @[simp] lemma accept_alt :
   accept (regex.alt r₁ r₂) s ↔ (accept r₁ s ∨ accept r₂ s) :=

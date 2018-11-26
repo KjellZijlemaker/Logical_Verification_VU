@@ -4,12 +4,6 @@ open expr
 open tactic
 open declaration
 
-example {a b c d e f : Prop} {p : ℕ → Prop} : a → ¬ b ∧ (c ↔ d) :=
-begin
-intros s,
-apply and.intro,
-intro l,
-end
 /- Question 1: A `safe` tactic -/
 
 /- We develop a tactic that applies all safe introduction and elimination rules for the connectives
@@ -55,10 +49,31 @@ end
 
 /- 1.2. Develop a `safe_destructs` tactic that eliminates `false`, `∧`, `∨`, `↔`, and `∃`. -/
 
-meta def safe_destructs : tactic unit := do
-tactic.intros,
-applyc (`false.elim),
-applyc (`and.elim)
+meta def safe_destructs : tactic unit :=
+(do
+  hs ← local_context,
+  h ← hs.mfirst (λh, do `(false ) ← infer_type h, pure h),
+  cases h,
+  safe_destructs,
+  skip)
+<|>
+(do
+  hs ← local_context,
+  h ← hs.mfirst (λh, do `(_ ∧ _) ← infer_type h, pure h),
+  cases h,
+  safe_destructs,
+  skip)
+<|> (do hs ← local_context,
+  h ← hs.mfirst (λh, do `(_ ∨ _) ← infer_type h, pure h),
+  cases h,
+  safe_destructs,
+  skip)
+<|> repeat(do hs ← local_context,
+  h ← hs.mfirst (λh, do `(_ ↔ _) ← infer_type h, pure h),
+  cases h,
+  safe_destructs,
+  skip)
+<|> skip
 
 
 example {a b c d e f : Prop} {p : ℕ → Prop}
@@ -176,8 +191,8 @@ solve the statement. We implement it in steps. -/
 /- 2.1. Develop a function that returns `tt` if a `declaration` is a theorem (`declaration.thm`) or
 an axiom (`declaration.ax`) and `ff` otherwise. -/
 
-meta def is_theorem : declaration → bool
-:= sorry
+meta def is_theorem : declaration → bool :=
+expr.fold declaration.thm
 
 /- 2.2. Develop a function that returns the list of all theorem names (theorem in the sense of
 `is_theorem`).

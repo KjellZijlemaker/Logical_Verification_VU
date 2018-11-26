@@ -98,10 +98,8 @@ begin
  simp[depth, height],
  intro s,
  intro a,
- simp[le_max_left],
+ simp[le_max],
  
-
-
   end
 
 /- 1.7. A tree's height is not only an upper bound on the depth of symbols stored in the tree. It is
