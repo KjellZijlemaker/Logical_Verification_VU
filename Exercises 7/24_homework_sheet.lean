@@ -120,7 +120,10 @@ proves all the subgoals that can be discharged directly by `assumption`.
 Hint: The `try` tactic combinator might come in handy. -/
 
 meta def safe : tactic unit :=
-sorry
+do
+applyc (`safe_intros),
+applyc (`safe_destructs),
+assumption
 
 example {a b c d e f : Prop} {p : ℕ → Prop}
 (hneg: ¬ a) (hand : a ∧ b ∧ c) (hor : c ∨ d) (himp : b → e) (hiff : e ↔ f) (hex : ∃x, p x) :
