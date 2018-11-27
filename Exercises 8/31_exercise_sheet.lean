@@ -82,35 +82,14 @@ assume s t, iff.trans (h₁₂ s t) (h₂₃ s t)
 
 lemma program_equiv_seq_skip1 {p : program σ} : seq skip p ≈ p :=
 begin
-assume s t, 
-apply iff.intro,
-assume l,
-cases p,
-simp [program_equiv],
--- cases l_h₂,
-simp at l,
-cases l,
-cases l_h,
-cases l_h_left,
-assumption,
-simp,
-cases l,
-repeat {cases l_h₁},
-repeat {cases l_h₂},
-refl,
-cases l,
-cases l_h₂,
-cases l_h₂_h₂,
-simp,
-cases l_h₂_h₂,
-cases l_h₂_h₁,
-simp,
-cases l_h₁,
-cases l_h₂_h₁ ,
-cases l_h₁
-
-
-
+  intros s t,
+  apply iff.intro,
+  intro h,
+  cases h,
+  cases h_h₁,
+  assumption,
+  intro h,
+  exact big_step.seq s big_step.skip h 
 end
 
 lemma program_equiv_seq_skip2 {p : program σ} : seq p skip ≈ p :=

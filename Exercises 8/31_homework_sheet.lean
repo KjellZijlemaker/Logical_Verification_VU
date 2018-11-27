@@ -62,7 +62,7 @@ inductive accept : regex → list char → Prop
 
 /- 1.1. Explain why there is no rule for `nothing`. -/
 
-/- Answer: enter your answer here. -/
+/- Answer: There is no input nor output. So it would be weird to have a rule for nothing, as there is nothing.. -/
 
 /- 1.2. Prove the following inversion rules.
 
@@ -72,42 +72,101 @@ exercise. -/
 variables {s s₁ s₂ : list char} {r r₁ r₂  : regex} {c : char}
 
 @[simp] lemma accept_char : accept (regex.char c) s ↔ s = [c] :=
-iff.intro
-(assume h, match s, h with _, accept.char)
+begin
+  apply iff.intro,
+  cases s,
+  simp,
+  intro s,
+  cases s,
+  simp,
+  intro a,
+  cases a,
+  simp,
+  intro b,
+  cases b,
+  exact accept.char c
+end
 
 @[simp] lemma accept_nothing : ¬ accept regex.nothing s:=
 begin
-intro a,
-cases s,
-repeat {cases a}
+  intro a,
+  cases s,
+  repeat {cases a}
 end
 
 @[simp] lemma accept_empty : accept regex.empty s ↔ s = [] :=
-iff.intro
-(assume h, match s, h with _, accept.empty := begin cases _x, simp end end)
+begin
+  apply iff.intro,
+  intro a,
+  cases a,
+  refl,
+  intro s,
+  cases s,
+  exact accept.empty
+end
 
 @[simp] lemma accept_concat :
   accept (regex.concat r₁ r₂) s ↔ (∃s₁ s₂, accept r₁ s₁ ∧ accept r₂ s₂ ∧ s = s₁ ++ s₂) :=
   begin
   apply iff.intro,
-  intro s,
-  cases s,
-  cases s_h₁,
-  cases s_h₂,
-  simp,
-  cases s_h₁,
-  cases s_h₂,
-  
+  intro a,
+  cases a,
+  apply exists.intro a_s₁,
+  apply exists.intro a_s₂,
+  apply and.intro,
+  assumption,
+  apply and.intro,
+  assumption,
+  induction a,
+  exact accept.concat a_s₁ a_s₂ a_h₁ a_h₂
+
   end
 
 @[simp] lemma accept_alt :
   accept (regex.alt r₁ r₂) s ↔ (accept r₁ s ∨ accept r₂ s) :=
-sorry
+begin
+  apply iff.intro,
+  intro a,
+  cases a,
+  cases a_h,
+  apply or.inl,
+  assumption,
+  apply or.inl,
+  assumption,
+  apply or.inl,
+  assumption,
+  apply or.inl,
+  assumption,
+  apply or.inl,
+  assumption,
+  apply or.inl,
+  assumption,
+  apply or.inl,
+  assumption,
+  apply or.inr,
+  assumption,
+  intro b,
+  cases b,
+  exact accept.alt_left s b ,
+  exact accept.alt_right s b 
+end
 
 lemma accept_star :
   accept (regex.star r) s ↔
   (s = [] ∨ (∃s₁ s₂, accept r s₁ ∧ accept (regex.star r) s₂ ∧ s = s₁ ++ s₂)) :=
-sorry
+begin
+apply iff.intro,
+intro acc,
+cases s,
+simp,
+repeat{simp[accept.star_base, accept.star_step]},
+repeat {apply exists.intro s_tl},
+apply and.intro,
+cases s_tl,
+cases r,
+exact accept.empty,
+
+end
 
 /- 1.3 **optional**. Prove a more sophisticated version of `accept_star`.
 
