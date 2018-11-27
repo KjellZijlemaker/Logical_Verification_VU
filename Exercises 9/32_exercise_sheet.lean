@@ -29,7 +29,25 @@ namespace partial_hoare
 
 lemma consequence (h : {* P *} p {* Q *}) (hp : ∀s, P' s → P s) (hq : ∀s, Q s → Q' s) :
   {* P' *} p {* Q' *} :=
-sorry
+begin
+  intro s,
+  intro hst,
+  intro p,
+  intro ps,
+  cases ps,
+  apply hq,
+  apply h s,
+  apply hp,
+  assumption,
+  assumption,
+  cases ps,
+  apply hq,
+  apply h s,
+  apply hp,
+  assumption,
+  generalize eq : (assign ps_n ps_f, s) = ps,
+
+end
 
 lemma consequence_left (P' : state → Prop) (h : {* P *} p {* Q *}) (hp : ∀s, P' s → P s) :
   {* P' *} p {* Q *} :=

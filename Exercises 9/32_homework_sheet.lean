@@ -55,25 +55,50 @@ variables {P P' P₁ P₂ P₃ Q Q' : state → Prop} {n : string} {f : state �
 
 lemma consequence (h : {* P *} p {* Q *}) (hp : ∀s, P' s → P s) (hq : ∀s, Q s → Q' s) :
   {* P' *} p {* Q' *} :=
-sorry
+begin
+  intros pq t pqs hpq,
+  cases hpq,
+  repeat{apply hq,
+  apply h pq,
+  apply hp},
+  repeat{assumption}
+end
 
 /- 1.2. Prove the rule for `assign`. -/
 
 lemma assign_intro (P : state → Prop) :
   {* λs:state, P (s.update n (f s)) *} assign n f {* P *} :=
-sorry
+begin
+  intros s t ls hls,
+  cases hls,
+  apply ls
+end
 
 /- 1.3. Prove the rule for `assert`. -/
 
 lemma assert_intro :
   {* λs, Q s → P s *} assert Q {* P *} :=
-sorry
+begin
+  intros s t sl hsl,
+  cases hsl,
+  apply sl,
+  assumption
+end
 
 /- 1.4. Prove the rule for `seq`. -/
 
 lemma seq_intro (h₁ : {* P₁ *} p₁ {* P₂ *}) (h₂ : {* P₂ *} p₂ {* P₃ *}) :
   {* P₁ *} seq p₁ p₂ {* P₃ *} :=
-sorry
+begin
+  intros s t ps pst,
+  cases pst,
+  apply h₂ s, 
+  apply h₁ s,
+  assumption,
+  
+
+
+end
 
 /- 1.5. Prove the rule for `choice`. -/
 
