@@ -95,6 +95,8 @@ begin
   apply h₂ s, 
   apply h₁ s,
   assumption,
+  cases pst_h₁,
+  cases pst_h₂,
   
 
 
@@ -105,7 +107,12 @@ end
 lemma choice_intro
   (h : ∀i (hi : i < list.length ps), {* λs, P s *} list.nth_le ps i hi {* Q *}) :
   {* P *} choice ps {* Q *} :=
-sorry
+begin
+  intros s t p pst,
+  cases pst,
+  apply h pst_i pst_hi s t,
+  repeat{assumption}
+end
 
 /- 1.6. State and prove the rule for `loop`.
 
@@ -113,7 +120,24 @@ sorry
       {* ... *} loop p {* ... *} :=
     ... -/
 
--- enter your answer here
+lemma loop_intro (h : {* P *} loop p {* Q *}) (hp : ∀s, P' s → P s) (hq : ∀s, Q s → Q' s) :
+  {* P' *} loop p {* Q' *} :=
+begin
+  intros s t ps pst,
+  cases pst,
+  apply hq,
+  apply h s,
+  apply hp,
+  repeat {assumption},
+  apply hq,
+  apply h s,
+  apply hp,
+  assumption,
+  cases pst_h₁,
+  cases pst_h₂,
+  
+
+end
 
 end partial_hoare
 
@@ -246,13 +270,21 @@ while (λs, s "n" ≠ 0)
 /- 2.1. Define the factorial function. -/
 
 def fact : ℕ → ℕ
-:= sorry
+| 0 := 1
+| (nat.succ n) := n * fact n
+
+#reduce fact 3
 
 /- 2.2. Prove the correctness of `FACT`, using `vcg`. -/
 
 lemma FACT_correct (n : ℕ) :
   {* λs, s "n" = n *} FACT {* λs, s "r" = fact n *} :=
-sorry
+begin
+   vcg,
+
+  
+
+end
 
 end FACT
 
