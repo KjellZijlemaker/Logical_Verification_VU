@@ -194,17 +194,25 @@ solve the statement. We implement it in steps. -/
 /- 2.1. Develop a function that returns `tt` if a `declaration` is a theorem (`declaration.thm`) or
 an axiom (`declaration.ax`) and `ff` otherwise. -/
 
-meta def is_theorem : declaration → bool :=
-expr.fold declaration.thm
+meta def is_theorem : declaration → bool 
+ | (declaration.thm s us ty body) := tt
+ | (declaration.ax n us ty) := tt
+ | otherwise := ff
+
+
+
 
 /- 2.2. Develop a function that returns the list of all theorem names (theorem in the sense of
 `is_theorem`).
 
 Here `get_env` and `environment.fold` are very helpful. See also Question 3 of the exercise. -/
 
-meta def get_all_theorems : tactic (list name) :=
-sorry
-
+meta def get_all_theorems : tactic (list name) := do
+ env ← get_env,
+  opts ← get_options,
+  environment.fold env [] $ λdecl lst,
+  if term_contains_all ns decl.type then decl.to_name :: lst else lst
+) 
 /- 2.3. Develop a tactic that (fully) solves the goal using a theorem `n`.
 
 Hints:

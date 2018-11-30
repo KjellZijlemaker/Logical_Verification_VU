@@ -118,7 +118,7 @@ end
   apply and.intro,
   assumption,
   induction a,
-  exact accept.concat a_s₁ a_s₂ a_h₁ a_h₂
+  exact accept.concat a_s₁ a_s₂ a_h₁ a_h₂ /-Don't know how to continue this one-/
 
   end
 
@@ -164,7 +164,7 @@ repeat {apply exists.intro s_tl},
 apply and.intro,
 cases s_tl,
 cases r,
-exact accept.empty,
+exact accept.empty, /-Does not work?-/
 
 end
 
