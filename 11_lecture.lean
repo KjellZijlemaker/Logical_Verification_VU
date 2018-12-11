@@ -33,7 +33,13 @@ def mul : nat → nat → nat
 #reduce mul (nat.succ (nat.succ nat.zero)) (nat.succ (nat.succ nat.zero))
 
 lemma mul_comm (m n : nat) : mul m n = mul n m :=
-_
+begin
+induction n,
+simp[mul],
+induction m,
+simp[mul],
+rw[m_ih],
+end
 
 lemma mul_assoc (l m n : nat) : mul (mul l m) n = mul l (mul m n) :=
 _
@@ -109,8 +115,21 @@ def reverse {α : Type} : list α → list α
 | (x :: xs) := reverse xs ++ [x]
 
 lemma reverse_reverse {α : Type} (xs : list α) : reverse (reverse xs) = xs :=
-_
+begin
+induction xs,
+refl,
+rw[<-xs_ih],
+simp[list.append_assoc]
+end
 
+
+lemma reverse_concat {α: Type} {β: Type} (xs : list α) (ls : list α): reverse (append xs ls) = append (reverse xs) (reverse ls) :=
+begin 
+simp[append],
+simp
+
+
+end
 
 /- Some basic types -/
 

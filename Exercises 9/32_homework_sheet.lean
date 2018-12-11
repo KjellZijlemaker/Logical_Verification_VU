@@ -95,10 +95,7 @@ begin
   apply h₂ s, 
   apply h₁ s,
   assumption,
-  cases pst_h₁,
-  cases pst_h₂,
   
-
 
 end
 
@@ -271,16 +268,25 @@ while (λs, s "n" ≠ 0)
 
 def fact : ℕ → ℕ
 | 0 := 1
-| (nat.succ n) := n * fact n
+| (x+1) := x * fact x+2
 
-#reduce fact 3
+#reduce fact 5
 
 /- 2.2. Prove the correctness of `FACT`, using `vcg`. -/
 
 lemma FACT_correct (n : ℕ) :
   {* λs, s "n" = n *} FACT {* λs, s "r" = fact n *} :=
 begin
+  intro s,
    vcg,
+   intro l,
+   vcg,
+   intro k,
+   vcg,
+   intro l,
+   vcg,
+   cases l,
+
 
   
 
