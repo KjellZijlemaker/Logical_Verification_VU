@@ -1,14 +1,13 @@
 
-def elts_lt_x {α: Type} (a: α): list α  → ℕ 
-| (x :: xs) := if a <= x then a  else x
-| [] := 0
 
+def insert {α: Type} (i: α) :list α → list α
+| [] := [i]
+| (x :: xs) := if x >= i then i :: (x :: xs) else x :: insert i xs
 
-def lesser {α: Type} (a: α): list α → list α 
-| (x :: xs) := list.filter < x 
-| [] := []
+def insertionSort {α: Type}: list α → ℕ → list α
+| [] 0 := []
+| (x :: xs) n := 
 
-#reduce elts_lt_x 2  [2 , 3]
 
 
 def fhalf {α: Type} (xs: list α): list α := list.take (list.length xs/2) xs
@@ -45,8 +44,20 @@ end
 lemma merge_comm {α : Type} : ∀(n : list α),∀(a : list α), merge n a = merge a n :=
 begin
 intros a n,
+induction a,
 induction n,
+simp[merge],
+simp[merge],
 
+
+end
+
+lemma test {α : Type} : ∀(n : list α),∀(a : list α), merge (n ++ a) = merge (a ++ n) :=
+begin
+intros a n,
+induction a,
+simp[merge],
+simp[merge],
 
 end
 

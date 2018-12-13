@@ -268,7 +268,7 @@ while (λs, s "n" ≠ 0)
 
 def fact : ℕ → ℕ
 | 0 := 1
-| (x+1) := x * fact x+2
+| (x + 1) := (x + 1) * fact (x)
 
 #reduce fact 5
 
@@ -277,6 +277,8 @@ def fact : ℕ → ℕ
 lemma FACT_correct (n : ℕ) :
   {* λs, s "n" = n *} FACT {* λs, s "r" = fact n *} :=
 begin
+  refine while_intro_inv (λs, s "n" + s "r" = fact n) _ _ _,
+
   intro s,
    vcg,
    intro l,
@@ -286,7 +288,7 @@ begin
    intro l,
    vcg,
    cases l,
-
+   simp {contextual := tt},
 
   
 
