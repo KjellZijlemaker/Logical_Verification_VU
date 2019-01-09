@@ -47,6 +47,10 @@ simp[drop]
 end
 
 
+@[simp] lemma drop_nil' {α : Type} : ∀(n : ℕ), drop n ([] : list α) = []
+| 0 := by refl 
+| (_ + 1) := by refl
+
 @[simp] lemma take_nil {α : Type} : ∀(n : ℕ), take n ([] : list α) = []:=
 begin
 intros n,
@@ -89,12 +93,12 @@ end
 
 
 lemma take_take {α : Type} : ∀(m : ℕ) (xs : list α), take m (take m xs) = take m xs
-| 0 m                    := by refl
-| (_ + 1) m              := 
+| 0 xs                    := by refl
+| (m + 1) xs              := 
 begin
-induction m,
+induction xs,
 refl,
-simp[take, take_take]
+simp[take],
 end
 
 lemma take_drop {α : Type} : ∀(n : ℕ) (xs : list α), take n xs ++ drop n xs = xs

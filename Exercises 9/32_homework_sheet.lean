@@ -98,7 +98,7 @@ begin
   
 
 end
-
+insert
 /- 1.5. Prove the rule for `choice`. -/
 
 lemma choice_intro
@@ -130,8 +130,7 @@ begin
   apply h s,
   apply hp,
   assumption,
-  cases pst_h₁,
-  cases pst_h₂,
+  
   
 
 end

@@ -149,7 +149,7 @@ assign "r" (λs, 0) ;;
 while (λs, s "n" ≠ 0)
 ( assign "r" (λs, s "r" + s "n") ;;
   assign "n" (λs, s "n" - 1) )
-
+big_step.ite_false
 /- The summation function: -/
 
 def sum_upto : ℕ → ℕ
