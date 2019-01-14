@@ -117,8 +117,9 @@ end
   assumption,
   apply and.intro,
   assumption,
-  induction a,
-  exact accept.concat a_s₁ a_s₂ a_h₁ a_h₂ /-Don't know how to continue this one-/
+  
+  -- induction a,
+  -- exact accept.concat a_s₁ a_s₂ a_h₁ a_h₂ /-Don't know how to continue this one-/
 
   end
 

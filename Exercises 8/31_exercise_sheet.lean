@@ -92,6 +92,40 @@ begin
   exact big_step.seq s big_step.skip h 
 end
 
+lemma program_equiv_seq_skip1' {p : program σ} : seq skip p ≈ p :=
+begin
+ intros s t,
+ apply iff.intro,
+ intro se,
+ cases se,
+ cases se_h₁,
+ assumption,
+ intro new,
+ apply big_step.seq s,
+ apply big_step.skip,
+ assumption
+end
+
+
+
+example {p q : program σ} {c :σ → Prop} :
+ite c p q ≈ ite (λs, ¬ c s) q p :=
+begin
+intros s t,
+apply iff.intro,
+repeat{
+intro h,
+cases h,
+apply big_step.ite_false,
+apply cc,
+apply big_step.ite_true
+apply cc
+},
+intro s,
+apply big_step.ite_false,
+end
+
+
 lemma program_equiv_seq_skip2 {p : program σ} : seq p skip ≈ p :=
 begin
 assume s t,

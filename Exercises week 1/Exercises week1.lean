@@ -64,7 +64,7 @@ def some_env : string → ℤ
 | "x" := 3
 | "y" := 17
 | _ := 201
-
+ite_
 
 
 -- invoke `#reduce` here
