@@ -1,25 +1,15 @@
 def new_list_sizeof : has_sizeof (list ℕ) := ⟨list.length⟩
 local attribute [instance, priority 100000] new_list_sizeof
 
--- def insert {α: Type} (i: Prop) [decidable i] :list α → list α
--- | [] := [i]
--- | (x :: xs) := if x >= i then i :: (x :: xs) else x :: insert i xs
-
--- -- def insertionSort {α: Type}: list α → ℕ → list α
--- -- | [] 0 := []
--- -- | (x :: xs) n := 
-
-
 -- Creating definitions for the mergesort
 def fhalf {α: Type} (xs: list α): list α := list.take (list.length xs/2) xs
-
 def sndhalf {α: Type} (xs: list α): list α := list.drop (list.length xs/2) xs
 
-#reduce fhalf [1,2,3,4,5, 6]
-#reduce sndhalf [1,2,3,4,5,6]
+#reduce fhalf [1,2,3,4,5,6]     --Expecting [1, 2, 3]
+#reduce sndhalf [1,2,3,4,5,6]   --Expecting [4, 5, 6]
 
 
--- Definition of the merge (sorting all in one go)
+-- Definition of the merge (merging two lists with the smallest first)
 def merge : list ℕ → list ℕ → list ℕ
    | xs [] := xs
    | [] ys := ys
@@ -30,47 +20,22 @@ def reverse {α : Type} : list α → list α
 | []        := []
 | (x :: xs) := reverse xs ++ [x]
 
-def concat {α: Type}: list (list α) → list α
-| [] := []
-| (xs :: xss) := xs ++ concat xss
-
-      -- then x :: y :: merge xs ys
-
 -- Testing the merge
-#reduce merge [2,23,1] [22,6,7]    --Expecting: [2, 2, 3, 3, 4, 7]
-#reduce merge [22,6,7] [2,23,1]     --Expecting: [2, 2, 3, 3, 4, 7]
+#reduce merge [8, 2, 1] [2,1,4]  --Expecting: [2, 1, 4, 8, 2, 1]
 #reduce merge [2,3,4] [2,3,7]    --Expecting: [2, 2, 3, 3, 4, 7]
 
 
 #reduce reverse(reverse(merge [2,3,7] [2,3,4]))
 
--- def mergepairs : list(list ℕ) → list(list ℕ)
--- | (xs :: xss :: xsss) := merge xs xss :: mergepairs xsss
--- | xsss := xsss
+lemma test : 1 < 1 + 1 := sorry
 
--- def merge' : list(list ℕ) → list(list ℕ) 
--- | [] := []
--- | [x] := [x]
--- | xs := merge' (mergepairs xs)
-
-
-
-
-def mergesort : list ℕ → list ℕ 
-   | [] := []
-   | [a] := [a]
-   | (xs) := 
-      have list.sizeof (fhalf xs) < list.sizeof xs, from begin simp[fhalf], cases xs, simp,  end,
-      have list.sizeof (sndhalf xs) < list.sizeof xs, from begin simp[sndhalf], simp [fhalf]  at this, cases xs, simp, simp[] end,
-   merge (mergesort (fhalf xs)) (mergesort (sndhalf xs))
-
--- def mergesortt : list ℕ → list ℕ     
--- | [] := []    
--- | [a] := [a]  
--- | (x::xs) := 
---   have list.sizeof (fhalf xs) < x + (1 + list.sizeof xs), from begin induction x, simp, simp[fhalf], cases xs, simp, assumption end,
---   have list.sizeof (sndhalf xs) < x + (1 + list.sizeof xs), from sorry,
---   merge (mergesort (fhalf xs)) (mergesort (sndhalf xs))
+def mergesort : list ℕ → list ℕ     
+| [] := []    
+| [a] := [a]  
+| (x::xs) := 
+  have list.sizeof (fhalf xs) < x + (1 + list.sizeof xs), from begin induction x, simp, simp[fhalf], cases xs, simp, simp[list.sizeof], simp[test],simp[list.sizeof] end,
+  have list.sizeof (sndhalf xs) < x + (1 + list.sizeof xs), from sorry,
+  merge (mergesort (fhalf xs)) (mergesort (sndhalf xs))
 
 -- #reduce mergesort [10,2,1,2,3] 
 
@@ -111,7 +76,7 @@ lemma merge_reverse_reverse : ∀(n m: list ℕ), reverse(reverse(merge n m)) = 
 lemma merge_cons: ∀(xs xss : list ℕ), ∀(x: ℕ),  merge xs (x::xss) = merge (x::xss) xs 
 | [] xss := by simp[merge]
 | (x :: xs) [] := begin intro x2, simp[merge], simp[merge_cons], sorry end
-| (x :: xs) (xx :: xss) := begin  intro x2, simp[merge], simp[merge_cons], sorry end
+| (x :: xs) (xx :: xss) := begin  intro x2, simp[merge], sorry end
 
 lemma comm_merge : ∀(n m: list ℕ), merge m n = merge n m 
 | [] xs :=  by simp[nil_merge, merge_nil]

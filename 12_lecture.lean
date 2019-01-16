@@ -104,25 +104,40 @@ def reverse {α : Type} : list α → list α
 | (x :: xs) := reverse xs ++ [x]
 
 /- `reverse` of `reverse` is identity -/
-
 lemma reverse_append {α : Type} :
   ∀xs ys : list α, reverse (xs ++ ys) = reverse ys ++ reverse xs
-| []        ys := by simp [reverse]
-| (x :: xs) ys := begin simp [reverse, reverse_append xs] end
+| [] ys := by simp[reverse]
+| (x :: xs) ys := begin simp[reverse, reverse_append] end
+
+
 
 lemma reverse_reverse {α : Type} : ∀xs : list α, reverse (reverse xs) = xs
-| []        := by refl
-| (x :: xs) := by simp [reverse, reverse_append, reverse_reverse xs]
+| [] := by simp[reverse]
+| (x :: xs) := begin simp[reverse], simp[reverse_append], rw[reverse_reverse], rw[reverse], rw[reverse], refl  end
 
 def map {α : Type} {β : Type} (f : α → β) : list α → list β
-| []        := []
-| (x :: xs) := f x :: map xs
+| [] := []
+| (x :: xs) :=  f x :: map xs
+
+
+-- lemma reverse_append {α : Type} :
+--   ∀xs ys : list α, reverse (xs ++ ys) = reverse ys ++ reverse xs
+-- | []        ys := by simp [reverse]
+-- | (x :: xs) ys := begin simp [reverse, reverse_append xs] end
+
+-- lemma reverse_reverse {α : Type} : ∀xs : list α, reverse (reverse xs) = xs
+-- | []        := by refl
+-- | (x :: xs) := by simp [reverse, reverse_append, reverse_reverse xs]
+
+-- def map {α : Type} {β : Type} (f : α → β) : list α → list β
+-- | []        := []
+-- | (x :: xs) := f x :: map xs
 
 /- Functorial properties of `map` -/
 
 lemma map_ident {α : Type} : ∀xs : list α, map (λx, x) xs = xs
 | []        := by refl
-| (x :: xs) := by simp [map, map_ident xs]
+| (x :: xs) := begin rw[map],  end
 
 example {α : Type} : ∀xs : list α, map (λx, x) xs = xs
 | []        := by refl
@@ -139,12 +154,12 @@ example {α : Type} : ∀xs : list α, xs = map (λx, x) xs
 lemma map_comp {α β γ : Type} (f : α → β) (g : β → γ) :
   ∀xs : list α, map (λx, g (f x)) xs = map g (map f xs)
 | []        := by refl
-| (x :: xs) := by simp [map, map_comp xs]
+| (x :: xs) := begin rw[map], rw[map_comp], rw[map], rw[map] end
 
 lemma map_append {α β : Type} (f : α → β) :
   ∀xs ys : list α, map f (xs ++ ys) = map f xs ++ map f ys
 | []        ys := by refl
-| (x :: xs) ys := by simp [map, map_append xs]
+| (x :: xs) ys := begin rw[map], rw[map_append], end
 
 lemma map_reverse {α β : Type} (f : α → β) :
   ∀xs : list α, map f (reverse xs) = reverse (map f xs)
