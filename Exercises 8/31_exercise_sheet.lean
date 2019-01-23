@@ -113,16 +113,25 @@ ite c p q ≈ ite (λs, ¬ c s) q p :=
 begin
 intros s t,
 apply iff.intro,
-repeat{
 intro h,
 cases h,
 apply big_step.ite_false,
-apply cc,
-apply big_step.ite_true
-apply cc,
-},
-intro s,
+intro l,
+apply l,
+assumption,
+assumption,
+apply big_step.ite_true,
+assumption,
+assumption,
+intro o,
+cases o,
 apply big_step.ite_false,
+assumption,
+assumption,
+simp at o_hs,
+apply big_step.ite_true,
+apply classical.by_contradiction o_hs,
+assumption
 end
 
 
@@ -175,6 +184,27 @@ exact big_step.ite_false h_hs big_step.skip
 end
 
 
+lemma program_equiv.ite_seq_while' :
+  ite c (seq p (while c p)) skip ≈ while c p :=
+begin
+intros s t,
+apply iff.intro,
+intro h,
+cases h,
+cases h_h,
+apply big_step.while_true h_h_t h_hs h_h_h₁ h_h_h₂,
+cases h_h,
+apply big_step.while_false,
+assumption,
+intro h,
+cases h,
+apply big_step.ite_true h_hs,
+apply big_step.seq h_t h_hp h_hw,
+apply big_step.ite_false,
+assumption,
+apply big_step.skip
+end
+
 /- 1.2. Prove one more equivalence. `@id σ` is the identity function on states. -/
 
 lemma program_equiv.skip_assign_id : assign (@id σ) ≈ skip :=
@@ -189,9 +219,21 @@ cases skip,
 apply big_step.assign
 end
 
+
 /- 1.3. Why do you think `@id σ` is necessary, as opposed to `id`? -/
 
 /- Answer: no idea -/
+
+
+example {p p' : program σ} : seq (while (λ_, true) p) p' ≈ while (λ_, true) p :=
+begin
+intros l t,
+apply iff.intro,
+intro s,
+cases s,
+apply big_step.while_true s_t s_h₁ s_h₂,
+
+end
 
 end program
 
