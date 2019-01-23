@@ -7,7 +7,7 @@ and that returns a list of length `n` consisting of `n` occurrences of `a`: `[a,
 
 def replicate {α : Type} (a: α):  ℕ  → list α
 |  0  := []
-|  (x+1)  :=  a :: replicate x 
+|  (x+1) :=  a :: replicate x 
 
 #reduce replicate 2 9
 #reduce replicate 1 9
@@ -16,33 +16,29 @@ def replicate {α : Type} (a: α):  ℕ  → list α
 #check list.length
 
 /- 1.2. State and prove that `replicate a n` has length `n`. -/
-lemma same_length  {α : Type} : ∀(n : ℕ), ∀(a: α), list.length(replicate a n) =  n  :=
-begin
-intros a n,
-induction a,
-repeat{simp[replicate]},
-rw[a_ih],
-simp
-end
+lemma same_length  {α : Type} : ∀(n : ℕ), ∀(a: α), list.length(replicate a n) =  n 
+| 0 a := begin simp[replicate] end
+| (n + 1) a := by simp[replicate, list.length, same_length]  
+
 #check list.map
 
 /- 1.3. State and prove that `list.map f (replicate a n)` is the same as `replicate (f a) n`. Make
 sure to state the result as generally as possible. -/
 
-lemma replicate_map {α β : Type} (f : α → β): ∀ (n : ℕ), ∀ (a: α), list.map f (replicate a n) = replicate (f a) n:=
-begin
-intros n a,
-induction n,
-repeat{simp[replicate]},
-rw[n_ih]
-end
+lemma replicate_map {α β : Type} (f : α → β): ∀ (n : ℕ), ∀ (a: α), list.map f (replicate a n) = replicate (f a) n
+| 0 a := by simp[replicate]
+| (n + 1) a := begin rw[replicate], rw[replicate], simp[replicate_map] end
 
 /- 1.4. State and prove that `replicate a m ++ replicate a n` equals `replicate a (m + n)`.
 
 There are many ways to prove this. A calculational proof might be useful here to manipulate the
 expression step by step (but is not mandatory). -/
+lemma replicate_append {α : Type}: ∀ (n m : ℕ), ∀ (a: α), replicate a m ++ replicate a n = replicate a (m + n)
+| n 0 a:= by simp[replicate] 
+| n (m+1) a := begin simp[replicate], rw[<-add_assoc], rw[replicate_append], rw[<-replicate_append], rw[<-replicate_append], simp[replicate], rw[replicate_append], simp[replicate], sorry end
 
-lemma replicate_append {α : Type}: ∀ (n m : ℕ), ∀ (a: α), replicate a m ++ replicate a n = replicate a (m + n):=
+
+lemma replicate_append' {α : Type}: ∀ (n m : ℕ), ∀ (a: α), replicate a m ++ replicate a n = replicate a (m + n):=
 begin
 intros m n as,
 induction n,
@@ -62,27 +58,14 @@ def reverse {α : Type} : list α → list α
 | []        := []
 | (x :: xs) := reverse xs ++ [x]
 
-lemma replicate_reverse_append {α : Type}: ∀ (n : ℕ), ∀ (a: α), replicate a n ++ [a]= a :: replicate a n:=
-begin
-intros n a,
-induction n,
-repeat{
-simp[replicate]},
-rw[n_ih]
-end
+lemma replicate_reverse_append {α : Type}: ∀ (n : ℕ), ∀ (a: α), replicate a n ++ [a]= a :: replicate a n
+| 0 a := by simp[replicate]
+| (n + 1) a := begin simp[replicate], rw[replicate_reverse_append]  end
 
 
-lemma replicate_reverse {α : Type}: ∀ (n : ℕ), ∀ (a: α), reverse (replicate a n) = replicate a n:=
-begin
-intros n a,
-induction n,
-simp[replicate],
-refl,
-simp[replicate, reverse],
-rw[n_ih],
-simp[replicate_reverse_append]
-end
-
+lemma replicate_reverse {α : Type}: ∀ (n : ℕ), ∀ (a: α), reverse (replicate a n) = replicate a n
+| 0 a := begin simp[replicate], simp[reverse] end
+| (n + 1) a := begin simp[replicate], simp[reverse], rw[replicate_reverse], rw[replicate_reverse_append] end
 
 
 /- Question 2: Binary relations -/

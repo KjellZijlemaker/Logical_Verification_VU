@@ -50,11 +50,9 @@ inductive consistent : tree α → Prop
 an inductive predicate `consistent_list` that captures this property. -/
 
 inductive consistent_trees : list (tree α) → Prop
-| consistent_leaf (w : ℕ) (a: list (tree α )) : consistent_trees a
-| consistent_inner (w : ℕ) (l : list (tree α)) (r : list(tree α)) :
-  consistent_trees l → consistent_trees r → (∀a, a ∈ alphabet_list l → a ∈ alphabet_list r → false) →
-  consistent_trees r
-
+| consistent_nil (w: ℕ) (a: α) : consistent_trees[]
+| consistent_cons (w: ℕ) (t: tree α) (ts: list (tree α) : consistent t → consistent_trees ts → (∀a, a ∈ alphabet t → a ∈ alphabet_list ts → false) → 
+consistent_trees ts
 /- 1.3. The height of a tree is the length of the longest path from its root node to a leaf. A tree
 consisting of a single node has height 0 by convention. Define a recursive function `height` that
 computes this.

@@ -119,7 +119,7 @@ cases h,
 apply big_step.ite_false,
 apply cc,
 apply big_step.ite_true
-apply cc
+apply cc,
 },
 intro s,
 apply big_step.ite_false,
@@ -130,49 +130,68 @@ lemma program_equiv_seq_skip2 {p : program σ} : seq p skip ≈ p :=
 begin
 assume s t,
 apply iff.intro,
-simp[program_equiv],
-intro e,
-cases p,
-simp,
-simp at e,
-cases e,
-cases e_h,
-cases e_h_left,
-cases e_h_right,
+intro l,
+cases l,
+cases l_h₂,
 assumption,
-simp at e,
-cases e,
-cases e_h,
-cases e_h_left,
-cases e_h_right,
-simp,
-simp at e,
-cases e,
-cases e_h,
-cases e_h_left,
-cases e_h_right,
-simp,
-cases e_h_left_h,
+intro s,
+apply big_step.seq t,
+assumption,
+apply big_step.skip 
 end
 
 
 lemma program_equiv_seq_congr {p₁ p₂ p₃ p₄ : program σ}
   (h₁₂ : p₁ ≈ p₂) (h₃₄ : p₃ ≈ p₄) :
   seq p₁ p₃ ≈ seq p₂ p₄ :=
-sorry
+begin
+intros a b,
+apply iff.intro,
+intro s,
+apply big_step.seq b,
+cases s,
+cases s_h₂,
+
+
+
+end
 
 lemma program_equiv.ite_seq_while :
   ite c (seq p (while c p)) skip ≈ while c p :=
-sorry
+begin
+intros s t,
+apply iff.intro,
+intro h,
+cases h,
+cases h_h,
+exact big_step.while_true h_h_t h_hs h_h_h₁ h_h_h₂,
+cases h_h,
+apply big_step.while_false,
+assumption,
+intro h,
+cases h,
+exact big_step.ite_true h_hs (big_step.seq h_t h_hp h_hw),
+exact big_step.ite_false h_hs big_step.skip
+end
+
 
 /- 1.2. Prove one more equivalence. `@id σ` is the identity function on states. -/
 
 lemma program_equiv.skip_assign_id : assign (@id σ) ≈ skip :=
-sorry
+begin
+intros id t,
+apply iff.intro,
+intro root,
+cases root,
+apply big_step.skip,
+intro skip,
+cases skip,
+apply big_step.assign
+end
 
 /- 1.3. Why do you think `@id σ` is necessary, as opposed to `id`? -/
 
-/- Answer: enter your answer here. -/
+/- Answer: no idea -/
 
 end program
 

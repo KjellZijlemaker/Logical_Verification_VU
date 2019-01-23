@@ -29,65 +29,27 @@ namespace partial_hoare
 
 lemma consequence (h : {* P *} p {* Q *}) (hp : ∀s, P' s → P s) (hq : ∀s, Q s → Q' s) :
   {* P' *} p {* Q' *} :=
-begin
-  intros p s,
-  intro pprime,
-  intro ps,
-  apply hq,
-  apply h p,
-  apply hp,
-  repeat{assumption}
-end
+sorry
 
 lemma consequence_left (P' : state → Prop) (h : {* P *} p {* Q *}) (hp : ∀s, P' s → P s) :
   {* P' *} p {* Q *} :=
-begin
-  intros p s,
-  intro pprime,
-  intro ps,
-  apply h p,
-  apply hp,
-  repeat{assumption}
-end
+sorry
 
 lemma consequence_right (Q : state → Prop) (h : {* P *} p {* Q *}) (hq : ∀s, Q s → Q' s) :
   {* P *} p {* Q' *} :=
-begin
-  intros p s,
-  intro normalp,
-  intro ps,
-  apply hq,
-  apply h p,
-  repeat {assumption}
-end
+sorry
 
 lemma skip_intro :
   {* P *} skip {* P *} :=
-begin
-  intro skip,
-  intros t pskip skippy,
-  cases skippy,
-  assumption
-end
+sorry
 
 lemma assign_intro (P : state → Prop) :
   {* λs, P (s.update n (f s)) *} assign n f {* P *} :=
-begin
-  intros a t s assign,
-  cases assign,
-  assumption
-end
+sorry
 
 lemma seq_intro (h₁ : {* P₁ *} p₁ {* P₂ *}) (h₂ : {* P₂ *} p₂ {* P₃ *}) :
   {* P₁ *} seq p₁ p₂ {* P₃ *} :=
-begin
-  intros p1 p2 cons ps,
-  apply h₂ p1,
-  apply h₁ p1,
-  assumption,
-  cases ps,  
-  
-end
+sorry
 
 lemma ite_intro (h₁ : {* λs, P s ∧ c s *} p₁ {* Q *}) (h₂ : {* λs, P s ∧ ¬ c s *} p₂ {* Q *}) :
   {* P *} ite c p₁ p₂ {* Q *} :=
@@ -169,7 +131,7 @@ assign "r" (λs, 0) ;;
 while (λs, s "n" ≠ 0)
 ( assign "r" (λs, s "r" + s "n") ;;
   assign "n" (λs, s "n" - 1) )
-big_step.ite_false
+
 /- The summation function: -/
 
 def sum_upto : ℕ → ℕ

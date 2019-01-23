@@ -62,7 +62,7 @@ def mem {α: Type} (x: α) [decidable_eq α]: list α → bool
 | [] := false
 | (xs :: xss) := if (xs = x) then true else mem xss 
 
-#reduce mem 2 [7,1]
+#reduce mem 2 [7,1] 
 
 /- The above `mem` predicate is not quite as convenient as the predefined `list.mem`, for which
 theorems and a nice notation (infix `∈`) are available, including a proof of decidability. Let's use

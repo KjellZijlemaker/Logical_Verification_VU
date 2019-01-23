@@ -121,13 +121,13 @@ def areverse {α : Type} : list α → list α → list α
 induction, we quickly see that the induction hypothesis is not strong enough. Start by proving the
 following generalization (using pattern matching or the `induction` tactic): -/
 
-lemma areverse_eq_reverse_append {α : Type} : ∀ys xs : list α, areverse ys xs = reverse xs ++ ys
-:= sorry
+-- lemma areverse_eq_reverse_append {α : Type} : ∀ys xs : list α, areverse ys xs = reverse xs ++ ys
+-- | [] xs := begin simp[reverse], simp[areverse_eq_reverse] end
 
 /- 2.2. Derive the desired equation. -/
 
-lemma areverse_eq_reverse {α : Type} (xs : list α) : areverse [] xs = reverse xs :=
-:= sorry
+lemma areverse_eq_reverse {α : Type} (xs : list α) : areverse [] xs = reverse xs:=
+begin induction xs, simp[areverse], simp[reverse], simp[areverse], simp[reverse], rw[<-xs_ih],  end
 
 /- 2.3. Prove the following property. Hint: A one-line inductionless proof is possible. -/
 
