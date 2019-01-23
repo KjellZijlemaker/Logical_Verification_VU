@@ -74,18 +74,12 @@ variables {s s₁ s₂ : list char} {r r₁ r₂  : regex} {c : char}
 @[simp] lemma accept_char : accept (regex.char c) s ↔ s = [c] :=
 begin
   apply iff.intro,
-  cases s,
-  simp,
-  intro s,
-  cases s,
-  simp,
-  intro a,
-  cases a,
-  simp,
-  intro b,
-  cases b,
-  exact accept.char c
+  
 end
+
+
+
+
 
 @[simp] lemma accept_nothing : ¬ accept regex.nothing s:=
 begin

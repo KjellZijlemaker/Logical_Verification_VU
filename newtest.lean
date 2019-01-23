@@ -87,7 +87,7 @@ def Do_Twice : ((ℕ → ℕ) → (ℕ → ℕ)) → (ℕ → ℕ) → (ℕ → 
 #reduce Do_Twice do_twice double 9
 
 
--- def curry (α β γ : Type) (f : α × β → γ) : α → β → γ := λ a b, b 
+def curry (α β γ : Type) (f : α × β → γ) : α → β → γ := λ a b, f (a,b)
 
 constants p q : Prop
 
@@ -112,4 +112,17 @@ begin
     apply and.intro,
     apply and.elim_right qp,
     apply and.elim_left qp
+end
+
+example (hpq : p → q) (hnq : ¬q) : ¬p :=
+begin
+intro f,
+apply hnq,
+apply hpq,
+assumption
+end
+
+lemma test2 :¬ (p ↔ ¬p) :=
+begin
+intro p,
 end

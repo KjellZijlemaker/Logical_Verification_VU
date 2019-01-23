@@ -8,11 +8,18 @@ numbers.
 Hint: Your predicate should have two introduction rules, one for the 0 case and one for the `n + 2`
 case. -/
 
--- enter your definition here
+inductive even : ℕ → Prop
+| zero : even 0
+| even_plus_two (n: ℕ) (h: even n): even(n + 2) 
+
 
 /- 1.2. Prove that 0, 2, 4, and 6 are even. -/
+ 
+lemma iseven0: even 0 := by {apply even.zero}
+lemma iseven2: even 2 := by {apply even.even_plus_two; apply even.zero}
+lemma iseven4: even 4 := by {repeat{apply even.even_plus_two}; apply even.zero}
+lemma iseven6: even 6 := by {repeat{apply even.even_plus_two}; apply even.zero}
 
--- enter your answer here
 
 def odd (n : ℕ) : Prop :=
   ¬ even n
@@ -21,17 +28,20 @@ def odd (n : ℕ) : Prop :=
 
 Hint: `cases` is useful to reason about hypotheses of the form `even ...`. -/
 
--- enter your answer here
+lemma isodd: odd 1 := by {intro h; cases h} 
 
 /- 1.4. Prove that 3, 5, and 7 are odd. -/
 
--- enter your answer here
+lemma isodd3 : odd 3 := by {intro s; cases s, cases s_h}
+lemma isodd5 : odd 5 := by {intro s; cases s, cases s_h, cases s_h_h}
+lemma isodd7 : odd 7 := by {intro s; cases s, cases s_h, cases s_h_h, cases s_h_h_h}
 
 /- 1.5. Complete the following proof by structural induction. -/
 
 lemma even_two_times :
   ∀m : ℕ, even (2 * m)
-:= sorry
+| 0 := even.zero
+| (n + 1) := begin apply even.even_plus_two, apply even_two_times n end
 
 /- 1.6. Complete the following proof by rule induction.
 

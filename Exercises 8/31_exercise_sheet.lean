@@ -254,23 +254,59 @@ infix ` ~> `:110 := big_step
 /- 2.1. Prove the following inversion rules, as we did in the lecture for the WHILE language. -/
 
 @[simp] lemma big_step_assign : (assign f, s) ~> t ↔ t = f s :=
-sorry
+begin
+apply iff.intro,
+intro assign,
+cases assign,
+trivial,
+intro equality,
+cases equality,
+apply big_step.assign
+end
 
 @[simp] lemma big_step_assert : (assert c, s) ~> t ↔ (t = s ∧ c s) :=
-sorry
+begin
+apply iff.intro,
+intro assert,
+cases assert,
+apply and.intro,
+trivial,
+assumption,
+intro equality,
+cases equality,
+cases equality_left,
+apply big_step.assert,
+assumption
+end
 
 @[simp] lemma big_step_seq : (seq p₁ p₂, s) ~> t ↔ (∃u, (p₁, s) ~> u ∧ (p₂, u) ~> t) :=
-sorry
+begin 
+  apply iff.intro,
+  intro h,
+  apply exists.intro t,
+  apply and.intro,
+  cases h,
+  apply big_step.seq t h_h₂ h_h₁,
+end
+
+-- iff.intro
+--   (assume h, match t, h with _, big_step.seq u h₁ h₂ := ⟨u, h₁, h₂⟩ end)
+--   (assume h, match t, h with _, ⟨u, h₁, h₂⟩ := big_step.seq u h₁ h₂ end)
 
 lemma big_step_loop : (loop p, s) ~> t ↔ (s = t ∨ (∃u, (p, s) ~> u ∧ (loop p, u) ~> t)) :=
-sorry
+begin
+apply iff.intro,
+intro loop,
+cases loop,
+apply big_step.loop_base loop,
+end
 
 @[simp] lemma big_step_choice :
   (choice ps, s) ~> t ↔ (∃(i : ℕ) (hi : i < list.length ps), (list.nth_le ps i hi, s) ~> t) :=
 sorry
 
 /- 2.2. Fill in the translation below of a deterministic program to a GCL program, by filling in the
-`sorry` placeholders below. -/
+`sorry` placeholders below. -/seq_h₁
 
 def of_program : program σ → gcl σ
 | program.skip          := assign id
