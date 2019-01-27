@@ -57,7 +57,10 @@ lemma id {α : Type} [partial_order α] : monotone (λa : α, a) :=
 assume a₁ a₂ ha, ha
 
 lemma const {α β : Type} [partial_order α] [partial_order β] (b : β) : monotone (λa : α, b) :=
-assume a₁ a₂ ha, le_refl b
+begin
+intros a b c,
+apply le_refl
+end
 
 lemma union {α β : Type} [partial_order α] (f g : α → set β) (hf : monotone f) (hg : monotone g) :
   monotone (λa, f a ∪ g a) :=

@@ -41,10 +41,15 @@ assume a₁ a₂ ha, le_refl b
 lemma union {α β : Type} [partial_order α] (f g : α → set β)
   (hf : monotone f) (hg : monotone g) : monotone (λa, f a ∪ g a) :=
 begin
-  intros a₁ a₂ ha b hb,
-  cases hb,
-  { exact or.intro_left _ (hf a₁ a₂ ha hb) },
-  { exact or.intro_right _ (hg a₁ a₂ ha hb) },
+  intros a b asmalb,
+  intros bs fg,
+  cases fg,
+  apply or.intro_left,
+  apply hf a,
+  repeat{assumption},
+  apply or.intro_right,
+  apply hg a,
+  repeat{assumption}
 end
 
 end monotone
@@ -95,16 +100,16 @@ by refl
 lemma monotone_comp {α β : Type} [partial_order α] (f g : α → set (β × β))
   (hf : monotone f) (hg : monotone g) : monotone (λa, f a ◯ g a) :=
   begin
-    intros a1 a2 order b h,
-    cases h,
-    cases h_h,
-    simp[comp],
-    apply exists.intro h_w,
-    apply and.intro,
-    apply hf a1,
-    repeat{assumption},
-    apply hg a1,
-    repeat{assumption}
+   intros a b asmalb h hp,
+   cases hp,
+   cases hp_h,
+   simp[comp],
+   apply exists.intro hp_w,
+   apply and.intro,
+   apply hf a,
+   repeat{assumption},
+   apply hg a,
+   repeat{assumption}
   end
 
 
@@ -112,12 +117,13 @@ lemma monotone_comp {α β : Type} [partial_order α] (f g : α → set (β × �
 lemma monotone_restrict {α β : Type} [partial_order α] (f : α → set (β × β)) (p : β → Prop)
   (hf : monotone f) : monotone (λa, f a ⇃ p) :=
   begin
-    intros a1 a2 order b h,
-    cases h,
+    intros a b asmalb h hp,
     simp[restrict],
     apply and.intro,
+    cases hp,
     assumption,
-    apply hf a1,
+    cases hp,
+    apply hf a,
     repeat{assumption}
   end
 
