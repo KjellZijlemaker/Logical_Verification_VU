@@ -82,78 +82,42 @@ assume s t, iff.trans (h₁₂ s t) (h₂₃ s t)
 
 lemma program_equiv_seq_skip1 {p : program σ} : seq skip p ≈ p :=
 begin
-  intros s t,
-  apply iff.intro,
-  intro h,
-  cases h,
-  cases h_h₁,
-  assumption,
-  intro h,
-  exact big_step.seq s big_step.skip h 
-end
-
-lemma program_equiv_seq_skip1' {p : program σ} : seq skip p ≈ p :=
-begin
- intros s t,
- apply iff.intro,
- intro se,
- cases se,
- cases se_h₁,
- assumption,
- intro new,
- apply big_step.seq s,
- apply big_step.skip,
- assumption
-end
-
-
-
-example {p q : program σ} {c :σ → Prop} :
-ite c p q ≈ ite (λs, ¬ c s) q p :=
-begin
 intros s t,
 apply iff.intro,
-repeat{
 intro h,
 cases h,
-apply big_step.ite_false,
-apply cc,
-apply big_step.ite_true
-apply cc,
-},
-intro s,
-apply big_step.ite_false,
+cases h_h₁,
+assumption,
+intro h,
+apply big_step.seq s,
+apply big_step.skip,
+assumption
 end
-
 
 lemma program_equiv_seq_skip2 {p : program σ} : seq p skip ≈ p :=
 begin
-assume s t,
+intros s t,
 apply iff.intro,
-intro l,
-cases l,
-cases l_h₂,
+intro h,
+cases h,
+cases h_h₂,
 assumption,
-intro s,
+intro h,
 apply big_step.seq t,
 assumption,
-apply big_step.skip 
+apply big_step.skip
 end
-
 
 lemma program_equiv_seq_congr {p₁ p₂ p₃ p₄ : program σ}
   (h₁₂ : p₁ ≈ p₂) (h₃₄ : p₃ ≈ p₄) :
   seq p₁ p₃ ≈ seq p₂ p₄ :=
 begin
-intros a b,
+intros s t,
 apply iff.intro,
-intro s,
-apply big_step.seq b,
-cases s,
-cases s_h₂,
-
-
-
+intro h,
+apply big_step.seq t,
+cases h,
+apply big_step.seq h_t h₁₂ h_h₁,
 end
 
 lemma program_equiv.ite_seq_while :
@@ -164,34 +128,25 @@ apply iff.intro,
 intro h,
 cases h,
 cases h_h,
-exact big_step.while_true h_h_t h_hs h_h_h₁ h_h_h₂,
+apply big_step.while_true h_h_t h_hs h_h_h₁ h_h_h₂,
 cases h_h,
-apply big_step.while_false,
-assumption,
+apply big_step.while_false h_hs,
 intro h,
 cases h,
-exact big_step.ite_true h_hs (big_step.seq h_t h_hp h_hw),
-exact big_step.ite_false h_hs big_step.skip
+apply big_step.ite_true h_hs,
+apply big_step.seq h_t h_hp h_hw,
+apply big_step.ite_false h_hs,
+apply big_step.skip
 end
-
 
 /- 1.2. Prove one more equivalence. `@id σ` is the identity function on states. -/
 
 lemma program_equiv.skip_assign_id : assign (@id σ) ≈ skip :=
-begin
-intros id t,
-apply iff.intro,
-intro root,
-cases root,
-apply big_step.skip,
-intro skip,
-cases skip,
-apply big_step.assign
-end
+sorry
 
 /- 1.3. Why do you think `@id σ` is necessary, as opposed to `id`? -/
 
-/- Answer: no idea -/
+/- Answer: enter your answer here. -/
 
 end program
 
@@ -254,72 +209,122 @@ infix ` ~> `:110 := big_step
 /- 2.1. Prove the following inversion rules, as we did in the lecture for the WHILE language. -/
 
 @[simp] lemma big_step_assign : (assign f, s) ~> t ↔ t = f s :=
-begin
+begin 
 apply iff.intro,
-intro assign,
-cases assign,
+intro h,
+cases h,
 trivial,
-intro equality,
-cases equality,
+intro h,
+cases h,
 apply big_step.assign
 end
+
 
 @[simp] lemma big_step_assert : (assert c, s) ~> t ↔ (t = s ∧ c s) :=
 begin
 apply iff.intro,
-intro assert,
-cases assert,
+intro h,
+cases h,
 apply and.intro,
 trivial,
 assumption,
-intro equality,
-cases equality,
-cases equality_left,
-apply big_step.assert,
-assumption
+intro h,
+cases h,
+cases h_left,
+apply big_step.assert h_right
 end
 
 @[simp] lemma big_step_seq : (seq p₁ p₂, s) ~> t ↔ (∃u, (p₁, s) ~> u ∧ (p₂, u) ~> t) :=
-begin 
-  apply iff.intro,
-  intro h,
-  apply exists.intro t,
-  apply and.intro,
-  cases h,
-  apply big_step.seq t h_h₂ h_h₁,
+begin
+apply iff.intro,
+intro h,
+cases h,
+apply exists.intro h_t,
+apply and.intro,
+assumption,
+assumption,
+intro h,
+cases h,
+cases h_h,
+apply big_step.seq h_w h_h_left h_h_right
 end
 
--- iff.intro
---   (assume h, match t, h with _, big_step.seq u h₁ h₂ := ⟨u, h₁, h₂⟩ end)
---   (assume h, match t, h with _, ⟨u, h₁, h₂⟩ := big_step.seq u h₁ h₂ end)
 
 lemma big_step_loop : (loop p, s) ~> t ↔ (s = t ∨ (∃u, (p, s) ~> u ∧ (loop p, u) ~> t)) :=
 begin
 apply iff.intro,
-intro loop,
-cases loop,
-apply big_step.loop_base loop,
+intro h,
+cases h,
+apply or.intro_left,
+trivial,
+apply or.intro_right,
+apply exists.intro h_u,
+apply and.intro,
+assumption,
+assumption,
+intro h,
+cases h,
+cases h,
+apply big_step.loop_base,
+cases h,
+cases h_h,
+apply big_step.loop_step h_w h_h_left h_h_right
 end
 
 @[simp] lemma big_step_choice :
   (choice ps, s) ~> t ↔ (∃(i : ℕ) (hi : i < list.length ps), (list.nth_le ps i hi, s) ~> t) :=
-sorry
+begin
+apply iff.intro,
+intro h,
+apply exists.intro,
+apply exists.intro,
+cases h,
+
+end
 
 /- 2.2. Fill in the translation below of a deterministic program to a GCL program, by filling in the
-`sorry` placeholders below. -/seq_h₁
+`sorry` placeholders below. -/
+
+-- def of_program : program σ → gcl σ
+-- | program.skip          := assign id
+-- | (program.assign f)    := assign f
+-- | (program.seq p₁ p₂)   :=
+--   seq (of_program p₁) (of_program p₂) 
+-- | (program.ite c p₁ p₂) :=
+--   choice [
+--     seq (assert c) (of_program p₁),
+--     seq (assert (λs, ¬ c s)) (of_program p₂)
+--   ]
+-- | (program.while c p)   := seq (loop (seq (assert c) (of_program p))) (assert (λs, ¬ c s))
+
+
+-- inductive program (σ : Type) : Type
+-- | skip {} : program
+-- | assign  : (σ → σ) → program
+-- | seq     : program → program → program
+-- | ite     : (σ → Prop) → program → program → program
+-- | while   : (σ → Prop) → program → program
+
+
+-- inductive gcl (σ : Type) : Type
+-- | assign : (σ → σ) → gcl
+-- | assert : (σ → Prop) → gcl
+-- | seq    : gcl → gcl → gcl
+-- | choice : list gcl → gcl
+-- | loop   : gcl → gcl
+
+
 
 def of_program : program σ → gcl σ
 | program.skip          := assign id
-| (program.assign f)    :=
-  sorry
-| (program.seq p₁ p₂)   :=
-  sorry
-| (program.ite c p₁ p₂) :=
-  choice [
-    seq (assert c) (of_program p₁),
-    seq (assert (λs, ¬ c s)) (of_program p₂)
-  ]
-| (program.while c p)   := seq (loop (seq (assert c) (of_program p))) (assert (λs, ¬ c s))
+| (program.assign f)    := assign f
+| (program.seq f s)     := seq (of_program f) (of_program s)
+| (program.ite c p1 p2) := choice [seq (assert c) (of_program p1), seq(assert (λs,¬c s)) (of_program p2)]
+| (program.while c p)   := seq(loop(seq(assert c) (of_program p))) (assert(λs, ¬ c s))
+
+
+
+
 
 /- 2.3. Prove that `of_program` is correct, in the sense that whenever the deterministic program `p`
 can make a big step, the corresponding GCL program makes a big step.

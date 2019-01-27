@@ -73,9 +73,33 @@ inductive dl (σ: Type) : Type
 | do_while  : dl → (σ → Prop) → dl 
 
 
-def wl_of_dl (σ: Type) : dl σ → wl σ
-| dl.skip   := wl.skip
-| dl := wl
+inductive ll (σ: Type) : Type
+| skip {}   :  ll
+| assign    :  (σ → σ) → ll
+| seq       : ll → ll → ll
+| ite       : (σ → Prop) → ll → ll → ll
+| loop      : ll → ll
+
+def den (σ: Type) : ll σ → set (σ × σ)
+| ll.skip       := ∅
+| (ll.assign f) := {st | st.2 = f st.1}
+| (ll.seq p q)  := den p
+| (ll.ite c p q):= (den p)
+| (ll.loop p)   := ∅
+
+
+def wl_of_dl {σ: Type} : dl σ → wl σ
+| dl.skip := wl.skip
+| (dl.assign f) := wl.assign f
+| (dl.seq f s)  := wl.seq (wl_of_dl f) (wl_of_dl s)
+| (dl.ite c p) q := wl.seq (wl.assign c) (wl.assign p)
+
+def run (σ: Type) : dl σ → σ → σ 
+| dl.skip       s := s
+| (dl.assign f) s := f s
+| (dl.seq f t)  s := s
+| (dl.unless f t) s := s
+| (dl.do_while f t) s := s
 
 
 def double : ℕ → ℕ := λ x, x + x

@@ -30,11 +30,9 @@ namespace partial_hoare
 lemma consequence (h : {* P *} p {* Q *}) (hp : ∀s, P' s → P s) (hq : ∀s, Q s → Q' s) :
   {* P' *} p {* Q' *} :=
 begin
-  intros p s,
-  intro pprime,
-  intro ps,
+  intros s t ps pst,
   apply hq,
-  apply h p,
+  apply h s,
   apply hp,
   repeat{assumption}
 end
@@ -42,10 +40,8 @@ end
 lemma consequence_left (P' : state → Prop) (h : {* P *} p {* Q *}) (hp : ∀s, P' s → P s) :
   {* P' *} p {* Q *} :=
 begin
-  intros p s,
-  intro pprime,
-  intro ps,
-  apply h p,
+  intros s t ps pst,
+  apply h s,
   apply hp,
   repeat{assumption}
 end
@@ -53,49 +49,67 @@ end
 lemma consequence_right (Q : state → Prop) (h : {* P *} p {* Q *}) (hq : ∀s, Q s → Q' s) :
   {* P *} p {* Q' *} :=
 begin
-  intros p s,
-  intro normalp,
-  intro ps,
-  apply hq,
-  apply h p,
-  repeat {assumption}
+  intros s t ps pst,
+  apply hq t,
+  apply h s,
+  repeat{assumption}
 end
 
 lemma skip_intro :
   {* P *} skip {* P *} :=
 begin
-  intro skip,
-  intros t pskip skippy,
-  cases skippy,
+  intros s t ps pst,
+  cases pst,
   assumption
 end
 
 lemma assign_intro (P : state → Prop) :
   {* λs, P (s.update n (f s)) *} assign n f {* P *} :=
 begin
-  intros a t s assign,
-  cases assign,
+  intros s t p nfs,
+  cases nfs,
   assumption
 end
 
 lemma seq_intro (h₁ : {* P₁ *} p₁ {* P₂ *}) (h₂ : {* P₂ *} p₂ {* P₃ *}) :
-  {* P₁ *} seq p₁ p₂ {* P₃ *} :=
-begin
-  intros p1 p2 cons ps,
-  apply h₂ p1,
-  apply h₁ p1,
-  assumption,
-  cases ps,  
+  {* P₁ *} seq p₁ p₂ {* P₃ *} := 
+  begin
+    intros s t P hst,
+  cases hst,
+  apply h₂ s,
+  apply h₁ hst_t,
+  apply h₂ hst_t _ hst_h₂,
   
-end
+
+  end
 
 lemma ite_intro (h₁ : {* λs, P s ∧ c s *} p₁ {* Q *}) (h₂ : {* λs, P s ∧ ¬ c s *} p₂ {* Q *}) :
-  {* P *} ite c p₁ p₂ {* Q *} :=
-sorry
+  {* P *} ite c p₁ p₂ {* Q *} := 
+  begin
+    intros s t pst itc,
+    cases itc,
+    apply h₁ s,
+    apply and.intro,
+    repeat{assumption},
+    apply h₂ s,
+    apply and.intro,
+    repeat{assumption}
+  end
+
+
 
 lemma while_intro (P : state → Prop) (h₁ : {* λs, P s ∧ c s *} p {* P *}) :
   {* P *} while c p {* λs, P s ∧ ¬ c s *} :=
-sorry
+  begin
+    intros s t ps cpt,
+    apply and.intro,
+    cases cpt,
+    repeat{assumption},
+    apply h₁ s,
+    apply and.intro,
+    repeat{assumption},
+  
+  end
 
 lemma skip_intro' (h : ∀s, P s → Q s):
   {* P *} skip {* Q *} :=
@@ -169,7 +183,7 @@ assign "r" (λs, 0) ;;
 while (λs, s "n" ≠ 0)
 ( assign "r" (λs, s "r" + s "n") ;;
   assign "n" (λs, s "n" - 1) )
-big_step.ite_false
+
 /- The summation function: -/
 
 def sum_upto : ℕ → ℕ
@@ -182,7 +196,16 @@ already (the intermediate result) and the work that remains to be done. -/
 
 lemma GAUSS_correct (n : ℕ) :
   {* λs, s "n" = n *} GAUSS {* λs, s "r" = sum_upto n *} :=
-sorry
+begin
+intros s t sn gaus,
+cases sn,
+cases gaus,
+cases gaus_h₂ ,
+cases gaus_h₂_hw ,
+vcg,
+
+
+end
 
 end GAUSS
 

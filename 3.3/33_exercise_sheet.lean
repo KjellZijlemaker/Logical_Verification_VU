@@ -94,11 +94,32 @@ by refl
 
 lemma monotone_comp {α β : Type} [partial_order α] (f g : α → set (β × β))
   (hf : monotone f) (hg : monotone g) : monotone (λa, f a ◯ g a) :=
-sorry
+  begin
+    intros a1 a2 order b h,
+    cases h,
+    cases h_h,
+    simp[comp],
+    apply exists.intro h_w,
+    apply and.intro,
+    apply hf a1,
+    repeat{assumption},
+    apply hg a1,
+    repeat{assumption}
+  end
+
+
 
 lemma monotone_restrict {α β : Type} [partial_order α] (f : α → set (β × β)) (p : β → Prop)
   (hf : monotone f) : monotone (λa, f a ⇃ p) :=
-sorry
+  begin
+    intros a1 a2 order b h,
+    cases h,
+    simp[restrict],
+    apply and.intro,
+    assumption,
+    apply hf a1,
+    repeat{assumption}
+  end
 
 
 /- Question 2: Kleene's theorem -/
@@ -126,7 +147,13 @@ def Union {α : Type} (s : ℕ → set α) : set α :=
 { a | ∃n, a ∈ s n }
 
 lemma Union_le {α : Type} {s : ℕ → set α} (a : set α) (h : ∀i, s i ≤ a) : Union s ≤ a :=
-sorry
+begin
+  intro u,
+  intro us,
+  cases us,
+  apply h us_w,
+  assumption
+end
 
 /- A continuous function `f` is a function that commutes with the union of any monotone sequence
 `s`: -/
@@ -151,7 +178,17 @@ lemma monotone_bi_seq {α : Type} (a₁ a₂ : set α) (h : a₁ ≤ a₂) :
 
 lemma Union_bi_seq {α : Type} (a₁ a₂ : set α) (ha : a₁ ≤ a₂) :
   Union (bi_seq a₁ a₂) = a₂ :=
-sorry
+begin
+  apply le_antisymm,
+  apply Union_le,
+  intro i,
+  intros a b,
+  cases i,
+  apply ha b,
+  exact b,
+  intros a1 a2,
+  apply Union_le,
+end
 
 lemma monotone_of_continuous {α : Type} (f : set α → set α) (hf : continuous f) :
   monotone f :=
