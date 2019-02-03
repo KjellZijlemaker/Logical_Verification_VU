@@ -92,7 +92,7 @@ def wl_of_dl {σ: Type} : dl σ → wl σ
 | dl.skip := wl.skip
 | (dl.assign f) := wl.assign f
 | (dl.seq f s)  := wl.seq (wl_of_dl f) (wl_of_dl s)
-| (dl.ite c p) q := wl.seq (wl.assign c) (wl.assign p)
+| (dl.ite c) p q  := wl.seq (wl.assign c) (wl.assign p)
 
 def run (σ: Type) : dl σ → σ → σ 
 | dl.skip       s := s

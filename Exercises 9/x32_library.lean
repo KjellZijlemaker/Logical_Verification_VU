@@ -76,6 +76,8 @@ inductive program : Type
 | seq     : program → program → program
 | ite     : (state → Prop) → program → program → program
 | while   : (state → Prop) → program → program
+| unless  : program → (state → Prop) → program
+| do_while: program → (state → Prop) → program
 
 infixr ` ;; `:90 := program.seq
 
@@ -90,14 +92,28 @@ inductive big_step : (program × state) → state → Prop
   big_step (assign n f, s) (s.update n (f s))
 | seq {p₁ p₂ s u} (t) (h₁ : big_step (p₁, s) t) (h₂ : big_step (p₂, t) u) :
   big_step (seq p₁ p₂, s) u
+
 | ite_true {c : state → Prop} {p₁ p₀ s t} (hs : c s) (h : big_step (p₁, s) t) :
   big_step (ite c p₁ p₀, s) t
 | ite_false {c : state → Prop} {p₁ p₀ s t} (hs : ¬ c s) (h : big_step (p₀, s) t) :
   big_step (ite c p₁ p₀, s) t
+
 | while_true {c : state → Prop} {p s u} (t) (hs : c s) (hp : big_step (p, s) t)
   (hw : big_step (while c p, t) u) :
   big_step (while c p, s) u
 | while_false {c : state → Prop} {p s} (hs : ¬ c s) : big_step (while c p, s) s
+
+|unless_false {c : state → Prop} {p s t} (hs: ¬ c s) (h: big_step (p, s) t):
+  big_step (unless p c, s) t
+
+|unless_true {c : state → Prop} {p s t} (hs: c s) (h: big_step (p, s) t) :
+  big_step (skip, s) t
+
+ |do_while_true {c : state → Prop} {p s u} (t) (hp : big_step (p, s) t)
+  (hw : big_step (while c p, t) u) (hs : c s)  :
+  big_step (do_while p c, s) u
+| do_while_false {c : state → Prop} {p s} (hs : ¬ c s) : big_step (do_while p c, s) s
+
 
 infix ` ⟹ `:110 := big_step
 

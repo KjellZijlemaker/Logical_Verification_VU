@@ -193,12 +193,17 @@ begin
   apply ha b,
   exact b,
   intros a1 a2,
-  apply Union_le,
+  apply exists.intro 
 end
 
 lemma monotone_of_continuous {α : Type} (f : set α → set α) (hf : continuous f) :
   monotone f :=
-sorry
+begin
+intros a1 a2,
+intros smaller,
+apply Union_bi_seq,
+ 
+end
 
 /- 2.2. Provide the following proof, using a similar case distinction as for `monotone_bi_seq`
 above. -/
@@ -220,7 +225,7 @@ you can perform induction. You will also need the lemma `lfp_eq` to unfold one i
 
 lemma lfp_Kleene {α : Type} (f : set α → set α) (hf : continuous f) :
   lfp f = Union (λn, f^^[n] ∅) :=
-sorry
+be
 
 
 /- Question 3 **optional**: Regular expressions -/

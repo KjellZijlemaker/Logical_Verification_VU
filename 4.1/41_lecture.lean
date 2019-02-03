@@ -21,25 +21,61 @@ example : Type u = Sort (u + 1) := by refl
 #check (Type u : Type (u + 1))
 
 -- `ulift α` is isomorphic to `α`
-#check ulift.{u v}
+#check ulift.{v u}
 #check @ulift.up.{u v}
 #check @ulift.down.{u v}
 
-#check plift.{0}
-
+#check plift.{1}
+#check eq.{u}
 
 /- `Prop` vs. `Type` -/
 
 -- `Prop` is a subsingleton
 example {p : Prop} {h₁ h₂ : p} : h₁ = h₂ := by refl
 
+namespace hidden
 
+class inhabited (α : Type _) :=
+(default : α)
+
+-- inductive nonempty (α : Sort u) : Prop
+-- | intro (val : α) : nonempty
+
+-- inductive inhabited (α : Sort u) : Sort (max 1 u) 
+-- | mk (default : α) : inhabited
+
+
+instance Prop_inhabited : inhabited Prop :=
+inhabited.mk true
+
+instance bool_inhabited : inhabited bool :=
+inhabited.mk tt
+
+instance nat_inhabited : inhabited nat :=
+inhabited.mk 0
+
+instance unit_inhabited : inhabited unit :=
+inhabited.mk ()
+
+def default (α : Type) [s : inhabited α] : α :=
+@inhabited.default α s
+
+instance prod_inhabited
+    {α β : Type} [inhabited α] [inhabited β] :
+  inhabited (prod α β) :=
+⟨(default α, default β)⟩
+
+#check default (nat × bool)
+#reduce default (nat × bool)
+
+end hidden
 /- Large elimination -/
 
 #check @false.elim        -- in a contradictory context
 #check @and.rec
 #check @eq.rec            -- substitution in `Prop` and `Type`
 #check @well_founded.rec  -- induction or well-founded recursion
+
 
 
 /- The axiom of choice -/
@@ -70,7 +106,6 @@ set_option pp.beta true
 #check quotient.exact
 
 #check (≈)
-
 
 /- Integers as a quotient -/
 

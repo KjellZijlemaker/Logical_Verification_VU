@@ -96,6 +96,29 @@ lemma ite_intro (h₁ : {* λs, P s ∧ c s *} p₁ {* Q *}) (h₂ : {* λs, P s
     repeat{assumption}
   end
 
+lemma unless_intro (h₁ : {* λs, P s ∧ ¬ c s  *} p {* Q *} ) :
+  {* P *} unless p c {* Q *} := 
+  begin
+    intros s t pst itc,
+    cases itc,
+    apply h₁ s,
+    apply and.intro,
+    repeat{assumption}
+  end
+
+lemma do_while_intro (h₁ : {* P *} p {* P *} ) (h₂ : {* P *} p {* λs, P s ∧ c s *} ) :
+  {* P *} do_while p c {* λs, P s ∧ ¬ c s *} := 
+  begin
+    intros s t pst itc,
+    apply and.intro,
+    apply h₁ s,
+    assumption,
+    cases itc,
+    
+
+  end
+
+
 
 
 lemma while_intro (P : state → Prop) (h₁ : {* λs, P s ∧ c s *} p {* P *}) :
@@ -108,7 +131,7 @@ lemma while_intro (P : state → Prop) (h₁ : {* λs, P s ∧ c s *} p {* P *})
     apply h₁ s,
     apply and.intro,
     repeat{assumption},
-  
+    apply big_step.while_true cpt_t cpt_hp ,
   end
 
 lemma skip_intro' (h : ∀s, P s → Q s):

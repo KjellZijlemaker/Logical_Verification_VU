@@ -27,13 +27,13 @@ def reverse {α : Type} : list α → list α
 
 #reduce reverse(reverse(merge [2,3,7] [2,3,4]))
 
-lemma test : 1 < 1 + 1 := sorry
+lemma test : 1 < 1 + 1 := by exact dec_trivial
 
 def mergesort : list ℕ → list ℕ     
 | [] := []    
 | [a] := [a]  
 | (x::xs) := 
-  have list.sizeof (fhalf xs) < x + (1 + list.sizeof xs), from begin induction x, simp, simp[fhalf], cases xs, simp, simp[list.sizeof], simp[test],simp[list.sizeof] end,
+  have list.sizeof (fhalf xs) < x + (1 + list.sizeof xs), from begin induction x, simp, simp[fhalf], cases xs, simp, simp[list.sizeof], simp[test],simp[list.sizeof], exact dec_trivial end,
   have list.sizeof (sndhalf xs) < x + (1 + list.sizeof xs), from sorry,
   merge (mergesort (fhalf xs)) (mergesort (sndhalf xs))
 

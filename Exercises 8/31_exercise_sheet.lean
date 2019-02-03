@@ -86,32 +86,15 @@ intros s t,
 apply iff.intro,
 intro h,
 cases h,
-<<<<<<< HEAD
 cases h_h₁,
 assumption,
 intro h,
 apply big_step.seq s,
-apply big_step.skip,
-=======
-apply big_step.ite_false,
-intro l,
-apply l,
-assumption,
-assumption,
-apply big_step.ite_true,
-assumption,
-assumption,
-intro o,
-cases o,
-apply big_step.ite_false,
-assumption,
-assumption,
-simp at o_hs,
-apply big_step.ite_true,
-apply classical.by_contradiction o_hs,
->>>>>>> 5c6db3ba250f0e72e508b242659f4977257d707f
-assumption
+
 end
+
+
+
 
 lemma program_equiv_seq_skip2 {p : program σ} : seq p skip ≈ p :=
 begin
@@ -158,8 +141,6 @@ apply big_step.ite_false h_hs,
 apply big_step.skip
 end
 
-<<<<<<< HEAD
-=======
 
 lemma program_equiv.ite_seq_while' :
   ite c (seq p (while c p)) skip ≈ while c p :=
@@ -182,7 +163,6 @@ assumption,
 apply big_step.skip
 end
 
->>>>>>> 5c6db3ba250f0e72e508b242659f4977257d707f
 /- 1.2. Prove one more equivalence. `@id σ` is the identity function on states. -/
 
 lemma program_equiv.skip_assign_id : assign (@id σ) ≈ skip :=
@@ -316,15 +296,14 @@ trivial,
 apply or.intro_right,
 apply exists.intro h_u,
 apply and.intro,
-assumption,
-assumption,
+repeat{assumption},
 intro h,
 cases h,
 cases h,
-apply big_step.loop_base,
+exact big_step.loop_base,
 cases h,
 cases h_h,
-apply big_step.loop_step h_w h_h_left h_h_right
+exact big_step.loop_step h_w h_h_left h_h_right
 end
 
 @[simp] lemma big_step_choice :

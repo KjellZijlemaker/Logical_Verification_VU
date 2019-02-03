@@ -148,11 +148,39 @@ by refl
 
 lemma monotone_comp {α β : Type} [partial_order α] (f g : α → set (β × β))
   (hf : monotone f) (hg : monotone g) : monotone (λa, f a ◯ g a) :=
-sorry
+begin
+intros a1 a2 asmallerequal,
+intro b,
+intros fa1,
+cases fa1,
+simp[comp],
+apply exists.intro fa1_w,
+apply and.intro,
+cases fa1_h,
+apply hf a1,
+assumption,
+assumption,
+cases fa1_h,
+apply hg a1,
+assumption,
+assumption
+end
 
 lemma monotone_restrict {α β : Type} [partial_order α] (f : α → set (β × β)) (p : β → Prop)
   (hf : monotone f) : monotone (λa, f a ⇃ p) :=
-sorry
+begin
+intros a1 a2,
+intro a1smallera2,
+intro b,
+intro f1,
+cases f1,
+simp[restrict],
+apply and.intro,
+assumption,
+apply hf a1,
+assumption,
+assumption
+end
 
 
 /- Denotational semantics -/

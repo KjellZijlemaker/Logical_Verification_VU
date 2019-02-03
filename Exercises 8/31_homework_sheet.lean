@@ -74,7 +74,12 @@ variables {s s₁ s₂ : list char} {r r₁ r₂  : regex} {c : char}
 @[simp] lemma accept_char : accept (regex.char c) s ↔ s = [c] :=
 begin
   apply iff.intro,
-  
+  intro h,
+  cases h,
+  trivial,
+  intro s,
+  cases s,
+  exact accept.char c
 end
 
 
@@ -83,38 +88,34 @@ end
 
 @[simp] lemma accept_nothing : ¬ accept regex.nothing s:=
 begin
-  intro a,
-  cases s,
-  repeat {cases a}
+  intro s,
+  cases s
 end
 
 @[simp] lemma accept_empty : accept regex.empty s ↔ s = [] :=
 begin
   apply iff.intro,
-  intro a,
-  cases a,
-  refl,
-  intro s,
-  cases s,
+  intro h,
+  cases h,
+  trivial,
+  intro h,
+  cases h,
   exact accept.empty
 end
 
 @[simp] lemma accept_concat :
   accept (regex.concat r₁ r₂) s ↔ (∃s₁ s₂, accept r₁ s₁ ∧ accept r₂ s₂ ∧ s = s₁ ++ s₂) :=
   begin
-  apply iff.intro,
-  intro a,
-  cases a,
-  apply exists.intro a_s₁,
-  apply exists.intro a_s₂,
-  apply and.intro,
-  assumption,
-  apply and.intro,
-  assumption,
+    apply iff.intro,
+    intro h,
+    cases h,
+    apply exists.intro h_s₁,
+    apply exists.intro h_s₂,
+    apply and.intro,
+    assumption,
+    apply and.intro,
+    assumption,
   
-  -- induction a,
-  -- exact accept.concat a_s₁ a_s₂ a_h₁ a_h₂ /-Don't know how to continue this one-/
-
   end
 
 @[simp] lemma accept_alt :

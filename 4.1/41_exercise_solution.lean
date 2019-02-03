@@ -51,9 +51,28 @@ classical.some_spec (exists_minimal_arg f)
 
 namespace exercise
 
+
+lemma reflexive1 {α: Type} (x: (ℕ × ℕ)) : x.1 + x.2 = x.1 + x.2:= by refl
+lemma symmetry1 {α: Type} (x y: (ℕ × ℕ)) (h1: x.1 + y.2 = y.1 + x.2) :  y.1 + x.2 = x.1 + y.2 := by rw[h1]
+lemma transitive1 {α: Type} (x y z: (ℕ × ℕ)) (h1: y.1 + x.2 = x.1 + y.2) (h2:  z.1 + y.2 = y.1 + z.2) : (x.1 + z.2) + y.2 = (x.1 + y.2) + z.2 := begin calc (x.fst + z.snd) + y.snd = (x.fst + y.snd) + z.snd : by ac_refl  end 
+
+
+lemma reflexivelist {α: Type} (xs: list α) : ∀x, x∈xs ↔ x∈xs := begin intro x, apply iff.intro, intro h, assumption, intro h, assumption end
+lemma symmetriclist {α: Type} (xs ys: list α) : ∀x, x∈xs ↔ x∈ys →  x∈ys ↔ x∈xs := begin intro x, apply iff.intro, intro h, cases h, apply h_mpr, intro s, assumption, intro h, apply iff.intro, intros a b, assumption, intro a, assumption end
+lemma transitivelist {α: Type} (xs ys zs: list α) : ∀x, x∈xs ↔ x∈ys →  x∈ys ↔ x∈zs → x ∈xs ↔ x∈zs := begin intro x, apply iff.intro, intro h, cases h, simp[symmetriclist] at h_mp, simp[symmetriclist] at h_mpr, sorry  
+
+
+instance fin_set.rel (α: Type) : setoid (list α) :={ r :=λxs ys,∀x, x∈xs↔x∈ys,
+iseqv := ⟨ (assume xs, by simp*),
+
+ ⟩ }
+
 instance int.rel : setoid (ℕ × ℕ) :=
 { r     := λa b, a.1 + b.2 = b.1 + a.2,
-  iseqv := sorry }
+  iseqv := ⟨ (assume a, reflexive1 ),
+            (assume a b eq, symmetry1),
+            (assume a b c d e , transitive1)
+  ⟩ }
 
 @[simp] lemma rel_iff (a b : ℕ × ℕ) : a ≈ b ↔ a.1 + b.2 = b.1 + a.2 := iff.rfl
 

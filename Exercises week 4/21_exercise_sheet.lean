@@ -10,9 +10,17 @@ predicate `α → bool`.
 
 def count {α : Type} (a : α) [decidable_eq α] : list α → ℕ
 | [] := 0
-| (x :: xs) := count xs + (if x = a then 1 else 0)
+| (x :: xs) := count xs + (if x = a then 1 else count xs)
+
+def reverse {α: Type}: list α → list α
+| [] := []
+| (x :: xs) := reverse xs ++ [x]
 
 
+lemma count_reverse_eq_count {α: Type} (a: α) (xs: list α) [decidable_eq α]: count a (reverse xs) = count xs
+begin
+
+end
 
 /- 1.2. Test your definition of `count` on a few examples to convince yourself that it is
 correct. This is something you should always do regardless of whether we ask for it.
@@ -22,6 +30,7 @@ You can use `#reduce` or (if `#reduce` fails) `#eval` to do this. -/
 #reduce count "a" ["a", "a"] 
 #reduce count 2 [2,2,2,2,2]
 #reduce count 0 [0,0,0,0]
+#reduce count 9 []
 
 /- 1.3. Complete the following proof (or replace it with a new proof structure of your own).
 
@@ -60,7 +69,7 @@ lemma count_le_length {α : Type} (a : α) [decidable_eq α] :
 
 def mem {α: Type} (x: α) [decidable_eq α]: list α → bool 
 | [] := false
-| (xs :: xss) := if (xs = x) then true else mem xss 
+| (xs :: xss):= if (xs = x) then true else mem xss 
 
 #reduce mem 2 [7,1] 
 

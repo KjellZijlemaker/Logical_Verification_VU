@@ -48,7 +48,17 @@ simp[replicate],
 refl
 end
 
+def map {α β: Type} (f: α → β): list α → list β
+| [] := []
+| (x :: xs) := f x :: map xs
 
+def concat {α: Type}: list(list α) → list α 
+| [] := []
+| (xs :: xss) := xs ++ concat xss
+
+lemma map_concat {α β: Type} (f :α →β) :∀xss : list (list α), map f (concat xss) = concat (map (map f) xss)
+| [] := by refl
+| (xs :: xss) := begin simp[map], simp[concat], rw[<-map_concat],  end
 /- 1.5. State and prove that `reverse` has no effect on `replicate a n`.
 
 Hint: If you get stuck in the induction step, this may indicate that you first need to prove
